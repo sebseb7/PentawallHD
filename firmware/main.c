@@ -183,17 +183,21 @@ int main (void)
 
 			if(state == 3)
 			{
-				if(data == addr)
+				if(data == 0xff)
+				{
+					// get addr
+					// display addr on LEDs
+					
+				}else if(data == addr)
 				{
 					// jump to bootloader
 					GPIOR2=255;
 					AppPtr_t AppStartPtr = (AppPtr_t)0x1800; 
 					AppStartPtr();
 				}
-				if(data == 0xff)
+				else
 				{
-					// get addr
-					// display addr on LEDs
+					// sleep for bootloader of differend device display progress on LEDs
 				}
 				state = 0;
 			}
