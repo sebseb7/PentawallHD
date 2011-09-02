@@ -24,6 +24,9 @@
 
 typedef void (*AppPtr_t)(void) __attribute__ ((noreturn)); 
 
+uint8_t pixelIsOurs(uint8_t,uint8_t);
+
+
 int main (void)
 {
 	// set mosi/sck out
@@ -109,6 +112,14 @@ int main (void)
 	}
 
 	
+	uint8_t pixel_x = 0;
+	uint8_t pixel_y = 0;
+	uint8_t pixel_r = 0;
+	uint8_t pixel_g = 0;
+	uint8_t pixel_b = 0;
+	uint8_t pixel_nr = 0;
+	
+	uint8_t frameBuffer[16*3];
 	
 	uint8_t data = 0;  
 	uint8_t state = 0;
@@ -170,15 +181,54 @@ int main (void)
 			if(state == 1)
 			{
 				// wait for our pixel
+				if(idx == 0)
+				{
+					pixel_x = data;
+				}
+				if(idx == 1)
+				{
+					pixel_y = data;
+				}
+				if(idx == 2)
+				{
+					pixel_r = data;
+				}
+				if(idx == 3)
+				{
+					pixel_g = data;
+				}
+				if(idx == 4)
+				{
+					pixel_b = data;
+				}
 				idx++;
-				SetLed(0,data,data,data);
+				
+				if((pixel_x == 0) && (pixel_y == 0))
+				{
+					SetLed(0,pixel_r,pixel_g,pixel_b);
+				}
+				else
+				{
+					pixel_nr = pixelIsOurs(pixel_x,pixel_y);
+					if(pixel_nr != 0)
+					{
+						SetLed(pixel_nr,pixel_r,pixel_g,pixel_b);
+					}
+				}
 			}
 
 			if(state == 2)
 			{
 				// wait for our part of the frame
+
+				//fill frameBuffer[]
+
+				if(idx == (DISPLAY_HEIGHT*DISPLAY_WIDTH))
+				{
+					SetAllLeds(frameBuffer);
+				}
+
 				idx++;
-				SetLed(0,data,data,data);
 			}
 
 			if(state == 3)
@@ -227,4 +277,10 @@ int main (void)
 //			USART0_putc(addr);
 		}
 	}
+}
+
+//returns 0 of that pixel is not on out tile, otherwise LED number (1..16)
+uint8_t pixelIsOurs(uint8_t x,uint8_t y)
+{
+	return 0;
 }
