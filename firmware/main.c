@@ -187,8 +187,16 @@ int main (void)
 				{
 					// get addr
 					// display addr on LEDs
-					
-				}else if(data == addr)
+					SetLed(0,0,0,0);
+					for(uint8_t i = 0;i<8;i++)
+					{
+						if((addr & (1<<i))==(1<<i))
+						{
+							SetLed(i+1,0xa0,0,0);
+						}
+					}
+				}
+				else if(data == addr)
 				{
 					// jump to bootloader
 					GPIOR2=255;
@@ -197,6 +205,19 @@ int main (void)
 				}
 				else
 				{
+					//disable UART for a few seconds
+			        UCSR0B &= ~(1 << RXCIE0);
+				    UCSR0B &= ~(1 << RXEN0);
+					SetLed(0,0,0,0);
+					for(uint8_t i = 0;i < 16;i++)
+					{
+						_delay_ms(0x1ff);
+						SetLed(i+1,0,0x50,0);
+					}
+					_delay_ms(0x1ff);
+					SetLed(0,0,0,0);
+				    UCSR0B |= (1 << RXEN0);
+			        UCSR0B |= (1 << RXCIE0);
 					// sleep for bootloader of differend device display progress on LEDs
 				}
 				state = 0;
