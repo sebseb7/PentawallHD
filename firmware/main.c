@@ -54,6 +54,7 @@ int main (void)
 
 	//fill the RAM of the TLC with defined values
 	SetLed(0,0,0,0);
+	writeChannels();
 
 	// blank = low (enable LEDs)
 	PORTD &= ~(1<<PORTD7);
@@ -112,25 +113,30 @@ int main (void)
 	for(uint8_t i = 1;i<17;i++)
 	{
 		SetLed(i,90,0,0); 
+		writeChannels();
 		_delay_ms(10);
 	}
 	for(uint8_t i = 1;i<17;i++)
 	{
 		SetLed(i,0,90,0); 
+		writeChannels();
 		_delay_ms(10);
 	}
 	for(uint8_t i = 1;i<17;i++)
 	{
 		SetLed(i,0,0,90); 
+		writeChannels();
 		_delay_ms(10);
 	}
 	for(uint8_t i = 1;i<17;i++)
 	{
 		SetLed(i,0,0,0);
+		writeChannels();
 		_delay_ms(10);
 	}
 
-	SetLed(0,0,0,255);
+	SetLed(0,0,0,55);
+	writeChannels();
 	
 	uint8_t pixel_x = 0;
 	uint8_t pixel_y = 0;
