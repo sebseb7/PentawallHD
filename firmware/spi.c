@@ -66,7 +66,7 @@ void SetLed(uint8_t led,uint8_t red,uint8_t green, uint8_t blue)
 	
 	}
 
-	writeChannels();
+//	writeChannels();
 }
 
 void SetAllLeds(uint8_t frameBuffer[])
@@ -77,7 +77,7 @@ void SetAllLeds(uint8_t frameBuffer[])
 		ch[idx[i]*3+1]=pgm_read_word(pwmtable_8 + frameBuffer[i*3+1]);
 		ch[idx[i]*3+2]=pgm_read_word(pwmtable_8 + frameBuffer[i*3+2]);
 	}
-	writeChannels();
+//	writeChannels();
 }
 
 void writeChannels(void)
@@ -91,11 +91,13 @@ void writeChannels(void)
 	}
 
 
-//	PORTD |= (1<<PORTD7);//blanc on
+	PORTD |= (1<<PORTD7);//blanc on
 	PORTB |= (1<<PORTB1); // latch on
-//	_delay_ms(1);
+	asm volatile("nop");
+	asm volatile("nop");
+	asm volatile("nop");
 	PORTB &= ~(1<<PORTB1); // latch off
-//	PORTD &= ~(1<<PORTD7);//blanc off
+	PORTD &= ~(1<<PORTD7);//blanc off
 
 
 }

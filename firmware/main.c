@@ -25,7 +25,14 @@
 typedef void (*AppPtr_t)(void) __attribute__ ((noreturn)); 
 
 uint8_t pixelIsOurs(uint8_t,uint8_t);
+uint8_t volatile pushData = 0;
 
+
+ISR (TIMER1_OVF_vect)
+{
+//	writeChannels();
+	pushData = 1;
+}
 
 int main (void)
 {
@@ -78,9 +85,21 @@ int main (void)
 	DIDR0 |= (1<<ADC4D);
 	DIDR0 |= (1<<ADC5D);
 	
-	//disable unused hardware (twi,adc,acd,timer0,timer1,timer2)
-	PRR |= (1<<PRTWI)|(1<<PRADC)|(1<<PRTIM0)|(1<<PRTIM1)|(1<<PRTIM2);
+	//disable unused hardware (twi,adc,acd,timer0,timer2)
+	PRR |= (1<<PRTWI)|(1<<PRADC)|(1<<PRTIM0)|(1<<PRTIM2);
 	ACSR |= (1<<ACD); 
+
+	//timer1 for tlc sync
+
+	//set to FastPWM Mode & prescaler 8
+	TCCR1A |= (1<<WGM10)|(1<<WGM11);
+	TCCR1B |= (1<<WGM12)|(1<<WGM13)|(1<<CS11);
+	//this is one cycle length of the TLC (2560)
+	OCR1A = 2680; //2680 looks good
+	//enable interrupt
+	TIMSK1 |= (1<<TOIE1);
+	
+
 
 	//enable UART RX
 	USART0_Init();
@@ -111,6 +130,7 @@ int main (void)
 		_delay_ms(10);
 	}
 
+	SetLed(0,0,0,255);
 	
 	uint8_t pixel_x = 0;
 	uint8_t pixel_y = 0;
@@ -273,8 +293,13 @@ int main (void)
 				state = 0;
 			}
 
-
-//			USART0_putc(addr);
+		}
+		if(pushData == 1)
+		{
+			pushData = 0;
+//			cli();
+			writeChannels();
+//			sei();
 		}
 	}
 }
