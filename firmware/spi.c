@@ -38,6 +38,8 @@ uint16_t pwmtable_8[256]  PROGMEM = {
 //led numbering (1 ist lower left, next to right)
 uint8_t idx[16] = {10,11,12,13,9,8,15,14,6,7,0,1,5,4,3,2};
 
+void writeChannels(void);
+
 void SPI_send(uint8_t cData) 
 {
 	SPDR = cData; 
@@ -64,6 +66,22 @@ void SetLed(uint8_t led,uint8_t red,uint8_t green, uint8_t blue)
 	
 	}
 
+	writeChannels();
+}
+
+void SetAllLeds(uint8_t frameBuffer[])
+{
+	for(uint8_t i = 0;i<16;i++)
+	{
+		ch[idx[i]*3]=pgm_read_word(pwmtable_8 + frameBuffer[i*3]);
+		ch[idx[i]*3+1]=pgm_read_word(pwmtable_8 + frameBuffer[i*3+1]);
+		ch[idx[i]*3+2]=pgm_read_word(pwmtable_8 + frameBuffer[i*3+2]);
+	}
+	writeChannels();
+}
+
+void writeChannels(void)
+{
 
 	for(uint8_t i = 24;i>0;i--)
 	{
@@ -78,6 +96,7 @@ void SetLed(uint8_t led,uint8_t red,uint8_t green, uint8_t blue)
 //	_delay_ms(1);
 	PORTB &= ~(1<<PORTB1); // latch off
 //	PORTD &= ~(1<<PORTD7);//blanc off
+
 
 }
 
