@@ -285,6 +285,7 @@ flash: $(TARGET).hex
 	
 
 uflash: $(TARGET).hex
+	./enterBootloader.perl
 	$(AVRDUDE) $(AVRDUDE_UFLAGS) $(AVRDUDE_WRITE_FLASH)
 	
 eeprom: $(TARGET).eep
