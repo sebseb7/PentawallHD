@@ -8,6 +8,7 @@
 #include "spi.h"
 
 volatile uint8_t newdata = 0;
+volatile uint8_t dirty = 0;
 
 uint16_t ch[48];
 
@@ -65,7 +66,8 @@ void SetLed(uint8_t led,uint8_t red,uint8_t green, uint8_t blue)
 		}
 	
 	}
-
+	
+	dirty = 1;
 //	writeChannels();
 }
 
@@ -77,27 +79,47 @@ void SetAllLeds(uint8_t frameBuffer[])
 		ch[idx[i]*3+1]=pgm_read_word(pwmtable_8 + frameBuffer[i*3+1]);
 		ch[idx[i]*3+2]=pgm_read_word(pwmtable_8 + frameBuffer[i*3+2]);
 	}
+	dirty = 1;
 //	writeChannels();
 }
 
 void writeChannels(void)
 {
 
-	for(uint8_t i = 24;i>0;i--)
+	if(dirty == 1)
 	{
-		SPI_send(ch[i*2-1]>>4);
-		SPI_send((ch[i*2-1]<<4)|(ch[i*2-2]>>8));
-		SPI_send(ch[i*2-2]);
+		dirty = 0;
+		for(uint8_t i = 24;i>0;i--)
+		{
+			SPI_send(ch[i*2-1]>>4);
+			SPI_send((ch[i*2-1]<<4)|(ch[i*2-2]>>8));
+			SPI_send(ch[i*2-2]);
+		}
+
+		PORTD |= (1<<PORTD7);//blanc on
+		PORTB |= (1<<PORTB1); // latch on
+		asm volatile("nop");
+		asm volatile("nop");
+		asm volatile("nop");
+		asm volatile("nop");
+		asm volatile("nop");
+		PORTB &= ~(1<<PORTB1); // latch off
+		PORTD &= ~(1<<PORTD7);//blanc off
+
 	}
+	else
+	{
+		PORTD |= (1<<PORTD7);//blanc on
+		asm volatile("nop");
+		asm volatile("nop");
+		asm volatile("nop");
+		asm volatile("nop");
+		asm volatile("nop");
+		PORTD &= ~(1<<PORTD7);//blanc off
+	}		
 
 
-	PORTD |= (1<<PORTD7);//blanc on
-	PORTB |= (1<<PORTB1); // latch on
-	asm volatile("nop");
-	asm volatile("nop");
-	asm volatile("nop");
-	PORTB &= ~(1<<PORTB1); // latch off
-	PORTD &= ~(1<<PORTD7);//blanc off
+
 
 
 }
