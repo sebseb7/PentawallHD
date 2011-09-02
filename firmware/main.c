@@ -47,12 +47,18 @@ int main (void)
 
 	// blank = low (enable LEDs)
 	PORTD &= ~(1<<PORTD7);
-
-
-	// get addr from solder jumpers
+	
+	DDRC &= ~(1<<PORTC0);
+	DDRC &= ~(1<<PORTC1);
+	DDRC &= ~(1<<PORTC2);
+	DDRC &= ~(1<<PORTC3);
+	DDRD &= ~(1<<PORTD2);
+	DDRD &= ~(1<<PORTD3);
 	PORTC |= (1<<PORTC0)|(1<<PORTC1)|(1<<PORTC2)|(1<<PORTC3);
 	PORTD |= (1<<PORTD2)|(1<<PORTD3);
-	uint8_t addr = (PINC | 0x0F)&((PIND | 0x0C)<<2);
+	// wait for the pin to synchronize
+	_delay_ms(1);
+	uint8_t addr = ((~PINC) & 0x0F)|(((~PIND) & 0x0C)<<4);
 
 
 	//enable pullups ununsed pins
@@ -135,10 +141,9 @@ int main (void)
 			}
 			if(data == 0x66)
 			{
-				// jump to bootloader
-				GPIOR2=255;
-				AppPtr_t AppStartPtr = (AppPtr_t)0x1800; 
-				AppStartPtr();
+				// bootloader
+				state = 3;
+				continue;
 			}
 			if(escape == 1)
 			{
@@ -166,13 +171,35 @@ int main (void)
 			{
 				// wait for our pixel
 				idx++;
+				SetLed(0,data,data,data);
 			}
 
 			if(state == 2)
 			{
 				// wait for our part of the frame
 				idx++;
+				SetLed(0,data,data,data);
 			}
+
+			if(state == 3)
+			{
+				if(data == addr)
+				{
+					// jump to bootloader
+					GPIOR2=255;
+					AppPtr_t AppStartPtr = (AppPtr_t)0x1800; 
+					AppStartPtr();
+				}
+				if(data == 0xff)
+				{
+					// get addr
+					// display addr on LEDs
+				}
+				state = 0;
+			}
+
+
+//			USART0_putc(addr);
 		}
 	}
 }
