@@ -226,21 +226,21 @@ int main (void)
 				if(idx == 4)
 				{
 					pixel_b = data;
+					if((pixel_x == 0) && (pixel_y == 0))
+					{
+						SetLed(0,pixel_r,pixel_g,pixel_b);
+					}
+					else
+					{
+						pixel_nr = pixelIsOurs(pixel_x,pixel_y);
+						if(pixel_nr != 0)
+						{
+							SetLed(pixel_nr,pixel_r,pixel_g,pixel_b);
+						}
+					}
 				}
 				idx++;
 				
-				if((pixel_x == 0) && (pixel_y == 0))
-				{
-					SetLed(0,pixel_r,pixel_g,pixel_b);
-				}
-				else
-				{
-					pixel_nr = pixelIsOurs(pixel_x,pixel_y);
-					if(pixel_nr != 0)
-					{
-						SetLed(pixel_nr,pixel_r,pixel_g,pixel_b);
-					}
-				}
 			}
 
 			if(state == 2)
@@ -249,10 +249,11 @@ int main (void)
 
 				//fill frameBuffer[]
 
-				if(idx == (DISPLAY_HEIGHT*DISPLAY_WIDTH))
+				if(idx == (DISPLAY_HEIGHT*DISPLAY_WIDTH*3))
 				{
-					SetAllLeds(frameBuffer);
+//					SetAllLeds(frameBuffer);
 				}
+				idx++;
 			}
 
 			if(state == 3)
@@ -301,9 +302,7 @@ int main (void)
 		if(pushData == 1)
 		{
 			pushData = 0;
-//			cli();
 			writeChannels();
-//			sei();
 		}
 	}
 }
