@@ -31,10 +31,10 @@
 #endif
 
 /* UART Baudrate */
-#define BAUDRATE 115200
+#define BAUDRATE 230400
 
 /* use "Double Speed Operation" */
-//#define UART_DOUBLESPEED
+#define UART_DOUBLESPEED
 
 /* use second UART on mega128 / can128 / mega162 / mega324p / mega644p */
 //#define UART_USE_SECOND
@@ -140,7 +140,11 @@ static inline uint16_t writeFlashPage(uint16_t waddr, pagebuf_t size)
 	do {
 		data = *tmp++;
 		data |= *tmp++ << 8;
-		boot_page_fill(baddr, data);	// call asm routine.
+
+		if ( baddr < APP_END ) 
+		{
+			boot_page_fill(baddr, data);	// call asm routine.
+		}
 
 		baddr += 2;			// Select next word in memory
 		size -= 2;			// Reduce number of bytes to write by two
