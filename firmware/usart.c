@@ -4,10 +4,11 @@
 #include "main.h"
 #include "usart.h"
 
-#define UART_RXBUFSIZE 64
+#define UART_RXBUFSIZE 128
 
 volatile static uint8_t rxbuf0[UART_RXBUFSIZE];
 volatile static uint8_t *volatile rxhead0, *volatile rxtail0;
+volatile uint8_t xon = 0;
 
 
 ISR (USART_RX_vect)
@@ -22,7 +23,12 @@ ISR (USART_RX_vect)
             *rxhead0 = c;
             ++rxhead0;
             if (rxhead0 == (rxbuf0 + UART_RXBUFSIZE)) rxhead0 = rxbuf0;
-        };
+            if((diff > 100)&&(xon==0))
+			{
+				xon=1;
+				//set the CTS pin
+			}
+        }
 }
 
 
@@ -74,5 +80,14 @@ uint8_t USART0_Getc_nb(uint8_t *c)
     if (rxhead0==rxtail0) return 0;
     *c = *rxtail0;
     if (++rxtail0 == (rxbuf0 + UART_RXBUFSIZE)) rxtail0 = rxbuf0;
+
+    uint8_t diff = rxhead0 - rxtail0;
+	if((diff < 10)&&(xon==1))
+	{
+		xon=0;
+		//set the CTS pin
+	}
+                                                                                        
+
     return 1;
 }
