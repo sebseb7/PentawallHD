@@ -71,7 +71,7 @@ int main (void)
 	PORTD |= (1<<PORTD2)|(1<<PORTD3);
 	// wait for the pin to synchronize
 	_delay_ms(1);
-	addr = ((~PINC) & 0x0F)|(((~PIND) & 0x0C)<<4);
+	addr = ((~PINC) & 0x0F)|(((~PIND) & 0x0C)<<2);
 	module_column = addr % (DISPLAY_WIDTH/4);
 	module_row    = (addr - module_column) / (DISPLAY_HEIGHT/4);
 
@@ -141,6 +141,24 @@ int main (void)
 
 	SetLed(0,0,0,55);
 	writeChannels();
+	
+	
+	for(uint8_t ax = 0;ax < DISPLAY_WIDTH;ax++)
+	{
+		for(uint8_t ay = 0;ay < DISPLAY_HEIGHT;ay++)
+		{
+			uint8_t	a_nr = pixelIsOurs(ax+1,ay+1);
+//			SetLed(0,0,0,0);
+//			writeChannels();
+			if(a_nr != 0)
+			{
+				SetLed(a_nr,100,0,0);
+				writeChannels();
+			}
+			_delay_ms(10);
+		}
+	}
+	
 	
 	uint8_t pixel_x = 0;
 	uint8_t pixel_y = 0;
@@ -261,24 +279,25 @@ int main (void)
 			{
 				// wait for our part of the frame
 
-				pixel_nr = pixelIsOurs(x_state,y_state);
+
+				pixel_nr = pixelIsOurs(x_state+1,y_state+1);
 				if(pixel_nr != 0)
 				{
-					frameBuffer[((pixel_nr-1)*3)+color_state] = data;
+						frameBuffer[((pixel_nr-1)*3)+color_state] = data;
 				}
 				
 				color_state++;
 				if(color_state == 3) 
 				{
 					color_state = 0;
-					x_state++;
-				}
-				if(x_state == DISPLAY_WIDTH)
-				{
-					x_state=0;
 					y_state++;
 				}
-				if(y_state == DISPLAY_HEIGHT)
+				if(y_state == DISPLAY_WIDTH)
+				{
+					y_state=0;
+					x_state++;
+				}
+				if(x_state == DISPLAY_HEIGHT)
 				{
 					SetAllLeds(frameBuffer);
 				}
@@ -300,6 +319,13 @@ int main (void)
 					}
 				}
 				else if(data == addr)
+				{
+					// jump to bootloader
+					GPIOR2=255;
+					AppPtr_t AppStartPtr = (AppPtr_t)0x1800; 
+					AppStartPtr();
+				}
+				else if(data == 0xfe)
 				{
 					// jump to bootloader
 					GPIOR2=255;
@@ -335,7 +361,7 @@ int main (void)
 	}
 }
 
-//returns 0 of that pixel is not on out tile, otherwise LED number (1..16)
+//returns 0 if that pixel is not on out tile, otherwise LED number (1..16)
 uint8_t pixelIsOurs(uint8_t x,uint8_t y)
 {
 	x--;
@@ -351,6 +377,7 @@ uint8_t pixelIsOurs(uint8_t x,uint8_t y)
 		uint8_t row = x - module_row*4;
 		uint8_t col = y - module_column*4;
 	
+		
 	
 		return row*4+col+1;
 	} 
