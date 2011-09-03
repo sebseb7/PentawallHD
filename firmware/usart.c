@@ -35,17 +35,21 @@ ISR (USART_RX_vect)
 void USART0_Init (void)
 {
 	// set clock divider
-	#undef BAUD
-	#define BAUD 230400
-	#include <util/setbaud.h>
-	UBRR0H = UBRRH_VALUE;
-	UBRR0L = UBRRL_VALUE;
+//	#undef BAUD
+//	#define BAUD 1000000
+//#	#define BAUD 1000000
+//	#include <util/setbaud.h>
+//	UBRR0H = UBRRH_VALUE;
+//	UBRR0L = UBRRL_VALUE;
+
+	UBRR0H = 0;
+	UBRR0L = 4;
 	
-#if USE_2X
+//#if USE_2X
 	UCSR0A |= (1 << U2X0);	// enable double speed operation
-#else
-	UCSR0A &= ~(1 << U2X0);	// disable double speed operation
-#endif
+//#else
+//	UCSR0A &= ~(1 << U2X0);	// disable double speed operation
+//#endif
 	
 
 	// flush receive buffer
@@ -87,7 +91,6 @@ uint8_t USART0_Getc_nb(uint8_t *c)
 		xon=0;
 		//set the CTS pin
 	}
-                                                                                        
 
     return 1;
 }

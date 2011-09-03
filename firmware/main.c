@@ -113,51 +113,82 @@ int main (void)
 	sei();
 
 
-	//dummy initialization code (needs to be replaced)
-	for(uint8_t i = 1;i<17;i++)
+	// display Addr Info on startup
+	for(uint8_t i = 0;i<8;i++)
 	{
-		SetLed(i,90,0,0); 
-		writeChannels();
-		_delay_ms(10);
+		if((addr & (1<<i))==(1<<i))
+		{
+			SetLed(i+1,0xa0,0,0);
+		}
+		if((module_row & (1<<i))==(1<<i))
+		{
+			SetLed(i+9,0,0xa0,0);
+		}
+		if((module_column & (1<<i))==(1<<i))
+		{
+			SetLed(i+13,0,0,0xa0);
+		}
 	}
-	for(uint8_t i = 1;i<17;i++)
-	{
-		SetLed(i,0,90,0); 
-		writeChannels();
-		_delay_ms(10);
-	}
-	for(uint8_t i = 1;i<17;i++)
-	{
-		SetLed(i,0,0,90); 
-		writeChannels();
-		_delay_ms(10);
-	}
-	for(uint8_t i = 1;i<17;i++)
-	{
-		SetLed(i,0,0,0);
-		writeChannels();
-		_delay_ms(10);
-	}
+	writeChannels();writeChannels();
+	_delay_ms(0xaff);
+	SetLed(0,0,0,0);
+	writeChannels();writeChannels();
 
-	SetLed(0,0,0,55);
-	writeChannels();
-	
-	
+
+	//initialisation sequence
+
 	for(uint8_t ax = 0;ax < DISPLAY_WIDTH;ax++)
 	{
 		for(uint8_t ay = 0;ay < DISPLAY_HEIGHT;ay++)
 		{
 			uint8_t	a_nr = pixelIsOurs(ax+1,ay+1);
-//			SetLed(0,0,0,0);
-//			writeChannels();
 			if(a_nr != 0)
 			{
 				SetLed(a_nr,100,0,0);
 				writeChannels();
 			}
-			_delay_ms(10);
+			else
+			{
+				writeChannels();
+			}
+			_delay_ms(1);
 		}
 	}
+	for(uint8_t ax = 0;ax < DISPLAY_WIDTH;ax++)
+	{
+		for(uint8_t ay = 0;ay < DISPLAY_HEIGHT;ay++)
+		{
+			uint8_t	a_nr = pixelIsOurs(ax+1,ay+1);
+			if(a_nr != 0)
+			{
+				SetLed(a_nr,0,100,0);
+				writeChannels();
+			}
+			else
+			{
+				writeChannels();
+			}
+			_delay_ms(1);
+		}
+	}
+	for(uint8_t ax = 0;ax < DISPLAY_WIDTH;ax++)
+	{
+		for(uint8_t ay = 0;ay < DISPLAY_HEIGHT;ay++)
+		{
+			uint8_t	a_nr = pixelIsOurs(ax+1,ay+1);
+			if(a_nr != 0)
+			{
+				SetLed(a_nr,0,0,100);
+				writeChannels();
+			}
+			else
+			{
+				writeChannels();
+			}
+			_delay_ms(1);
+		}
+	}
+	writeChannels();
 	
 	
 	uint8_t pixel_x = 0;
@@ -324,6 +355,10 @@ int main (void)
 					GPIOR2=255;
 					AppPtr_t AppStartPtr = (AppPtr_t)0x1800; 
 					AppStartPtr();
+				}
+				else if(data == 0xfa)
+				{
+					UBRR0L = 0;
 				}
 				else if(data == 0xfe)
 				{
