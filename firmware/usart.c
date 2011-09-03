@@ -4,7 +4,7 @@
 #include "main.h"
 #include "usart.h"
 
-#define UART_RXBUFSIZE 128
+#define UART_RXBUFSIZE 512
 
 volatile static uint8_t rxbuf0[UART_RXBUFSIZE];
 volatile static uint8_t *volatile rxhead0, *volatile rxtail0;

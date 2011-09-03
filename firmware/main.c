@@ -26,7 +26,9 @@ typedef void (*AppPtr_t)(void) __attribute__ ((noreturn));
 
 uint8_t pixelIsOurs(uint8_t,uint8_t);
 uint8_t volatile pushData = 0;
-
+uint8_t addr = 0;
+uint8_t module_column = 0;
+uint8_t module_row    = 0;
 
 ISR (TIMER1_OVF_vect)
 {
@@ -69,7 +71,9 @@ int main (void)
 	PORTD |= (1<<PORTD2)|(1<<PORTD3);
 	// wait for the pin to synchronize
 	_delay_ms(1);
-	uint8_t addr = ((~PINC) & 0x0F)|(((~PIND) & 0x0C)<<4);
+	addr = ((~PINC) & 0x0F)|(((~PIND) & 0x0C)<<4);
+	module_column = addr % (DISPLAY_WIDTH/4);
+	module_row    = (addr - module_column) / (DISPLAY_HEIGHT/4);
 
 
 	//enable pullups ununsed pins
@@ -146,11 +150,18 @@ int main (void)
 	uint8_t pixel_nr = 0;
 	
 	uint8_t frameBuffer[16*3];
+	for(uint8_t i = 0;i<(16*3);i++)
+	{
+		frameBuffer[i]=0;
+	}
 	
 	uint8_t data = 0;  
 	uint8_t state = 0;
 	uint8_t escape = 0;
-	uint16_t idx = 0;
+	uint8_t idx = 0;
+	uint8_t color_state = 0;
+	uint8_t x_state = 0;
+	uint8_t y_state = 0;
 
 	while(1)
 	{
@@ -168,7 +179,10 @@ int main (void)
 			{
 				// full frame
 				state = 2;
-				idx = 0;
+
+				color_state = 0;
+				x_state = 0;
+				y_state = 0;
 				continue;
 			}
 			if(data == 0x65)
@@ -247,13 +261,27 @@ int main (void)
 			{
 				// wait for our part of the frame
 
-				//fill frameBuffer[]
-
-				if(idx == (DISPLAY_HEIGHT*DISPLAY_WIDTH*3))
+				pixel_nr = pixelIsOurs(x_state,y_state);
+				if(pixel_nr != 0)
 				{
-//					SetAllLeds(frameBuffer);
+					frameBuffer[((pixel_nr-1)*3)+color_state] = data;
 				}
-				idx++;
+				
+				color_state++;
+				if(color_state == 3) 
+				{
+					color_state = 0;
+					x_state++;
+				}
+				if(x_state == DISPLAY_WIDTH)
+				{
+					x_state=0;
+					y_state++;
+				}
+				if(y_state == DISPLAY_HEIGHT)
+				{
+					SetAllLeds(frameBuffer);
+				}
 			}
 
 			if(state == 3)
@@ -310,5 +338,22 @@ int main (void)
 //returns 0 of that pixel is not on out tile, otherwise LED number (1..16)
 uint8_t pixelIsOurs(uint8_t x,uint8_t y)
 {
+	x--;
+	y--;
+	
+	if( 
+		(x >=  module_row      *4) && 
+		(x <  (module_row+1)   *4) &&
+		(y >=  module_column   *4) && 
+		(y <  (module_column+1)*4)
+	)
+	{
+		uint8_t row = x - module_row*4;
+		uint8_t col = y - module_column*4;
+	
+	
+		return row*4+col+1;
+	} 
+
 	return 0;
 }

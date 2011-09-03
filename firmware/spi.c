@@ -69,19 +69,17 @@ void SetLed(uint8_t led,uint8_t red,uint8_t green, uint8_t blue)
 	}
 	
 	dirty = 1;
-//	writeChannels();
 }
 
 void SetAllLeds(uint8_t frameBuffer[])
 {
 	for(uint8_t i = 0;i<16;i++)
 	{
-		ch[idx[i]*3]=pgm_read_word(pwmtable_8 + frameBuffer[i*3]);
+		ch[idx[i]*3]  =pgm_read_word(pwmtable_8 + frameBuffer[i*3]);
 		ch[idx[i]*3+1]=pgm_read_word(pwmtable_8 + frameBuffer[i*3+1]);
 		ch[idx[i]*3+2]=pgm_read_word(pwmtable_8 + frameBuffer[i*3+2]);
 	}
 	dirty = 1;
-//	writeChannels();
 }
 
 void writeChannels(void)
