@@ -1,6 +1,11 @@
-// spanungen blau: 3.6
-// rot : 2.9
-// gruen 3.9
+// links neue messung , rechts allte messung mit mehr puffer
+// spanungen blau: 3.3-3.6 1800/4700 == 3,34(soll) 
+// rot : 2.5-2.9 1500/4700 == 3,19(soll) (3,208 ist) (mit 1200 muesste es bis 3,03 runter gehen)
+// gruen 3.5-3.9 2200/4700 == 3,55(soll)
+
+//alternativ blau: 2200/4700 == 3,55
+//alternativ gruen: 2700/4700 == 3,81
+
 
 #include <inttypes.h>
 #include <avr/io.h>
@@ -112,6 +117,18 @@ int main (void)
 	//enable interrupts
 	sei();
 
+	SetLed(0,255,255,255);
+	writeChannels();writeChannels();
+
+	while(1)
+	{
+	
+		_delay_ms(100);
+		SetLed(0,255,255,255);
+		writeChannels();writeChannels();
+	};
+
+
 
 	// display Addr Info on startup
 	for(uint8_t i = 0;i<8;i++)
@@ -211,6 +228,7 @@ int main (void)
 	uint8_t color_state = 0;
 	uint8_t x_state = 0;
 	uint8_t y_state = 0;
+
 
 	while(1)
 	{
