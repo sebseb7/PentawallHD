@@ -431,18 +431,18 @@ uint8_t pixelIsOurs(uint8_t x,uint8_t y)
 	y--;
 	
 	if( 
-		(x >=  module_row      *5) && 
-		(x <  (module_row+1)   *5) &&
-		(y >=  module_column   *5) && 
-		(y <  (module_column+1)*5)
+		(x >=  module_row      *4) && 
+		(x <  (module_row+1)   *4) &&
+		(y >=  module_column   *4) && 
+		(y <  (module_column+1)*4)
 	)
 	{
-		uint8_t row = x - module_row*5;
-		uint8_t col = y - module_column*5;
+		uint8_t row = x - module_row*4;
+		uint8_t col = y - module_column*4;
 	
 		
 	
-		return row*5+col+1;
+		return row*4+col+1;
 	} 
 
 	return 0;
