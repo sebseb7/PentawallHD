@@ -14,7 +14,7 @@ if($hostname eq 'lennyvm')
     
 my $port = Device::SerialPort->new($port);
 $port->databits(8);
-$port->baudrate(1250000);
+$port->baudrate(500000);
 $port->parity("none");
 $port->stopbits(1);
 

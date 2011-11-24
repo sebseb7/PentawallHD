@@ -43,18 +43,24 @@ ISR (TIMER1_OVF_vect)
 
 int main (void)
 {
+	//make sure D1 is input;
+	DDRD &= ~(1<<DDD1);
+	PORTD &= ~(1<<PORT1);
+
 	// set mosi/sck out
 	DDRB = (1<<DDB5)|(1<<DDB3)|(1<<DDB2);
 	
-	//latch out
-	DDRB |= (1<<DDB1);
-	//blank out
-	DDRD |= (1<<DDD7);
 
 	// latch aus
 	PORTB &= ~(1<<PORTB1);
 	// blank = high (all LEDs off)
 	PORTD |= (1<<PORTD7);
+
+	//latch out
+	DDRB |= (1<<DDB1);
+	//blank out
+	DDRD |= (1<<DDD7);
+
 	
 	//SPI_Init()
 	SPCR = (1<<SPE)|(1<<MSTR)|(1<<SPR0);
@@ -62,6 +68,8 @@ int main (void)
 	//fill the RAM of the TLC with defined values
 	SetLed(0,0,0,0);
 	writeChannels();
+
+	_delay_ms(1);
 
 	// blank = low (enable LEDs)
 	PORTD &= ~(1<<PORTD7);
@@ -117,17 +125,13 @@ int main (void)
 	//enable interrupts
 	sei();
 
-	SetLed(0,255,255,255);
+	//make sure D1 is input;
+	DDRD &= ~(1<<DDD1);
+	PORTD &= ~(1<<PORT1);
+
+
+	SetLed(0,0,0,0);
 	writeChannels();writeChannels();
-
-	while(1)
-	{
-	
-		_delay_ms(100);
-		SetLed(0,255,255,255);
-		writeChannels();writeChannels();
-	};
-
 
 
 	// display Addr Info on startup
@@ -381,23 +385,29 @@ int main (void)
 				else if(data == 0xfe)
 				{
 					// jump to bootloader
-					GPIOR2=255;
-					AppPtr_t AppStartPtr = (AppPtr_t)0x1800; 
-					AppStartPtr();
+					//GPIOR2=255;
+					//AppPtr_t AppStartPtr = (AppPtr_t)0x1800; 
+					//AppStartPtr();
 				}
 				else
 				{
 					//disable UART for a few seconds
 			        UCSR0B &= ~(1 << RXCIE0);
 				    UCSR0B &= ~(1 << RXEN0);
-					SetLed(0,0,0,0);
+					SetLed(0,0,200,0);
+					writeChannels();
 					for(uint8_t i = 0;i < 16;i++)
 					{
-						_delay_ms(0x1ff);
+						_delay_ms(0x3ff);
 						SetLed(i+1,0,0x50,0);
+						writeChannels();
+						_delay_ms(0x3ff);
+						SetLed(i+1,0x50,0,0);
+						writeChannels();
 					}
 					_delay_ms(0x1ff);
 					SetLed(0,0,0,0);
+				writeChannels();
 				    UCSR0B |= (1 << RXEN0);
 			        UCSR0B |= (1 << RXCIE0);
 					// sleep for bootloader of differend device display progress on LEDs
@@ -421,18 +431,18 @@ uint8_t pixelIsOurs(uint8_t x,uint8_t y)
 	y--;
 	
 	if( 
-		(x >=  module_row      *4) && 
-		(x <  (module_row+1)   *4) &&
-		(y >=  module_column   *4) && 
-		(y <  (module_column+1)*4)
+		(x >=  module_row      *5) && 
+		(x <  (module_row+1)   *5) &&
+		(y >=  module_column   *5) && 
+		(y <  (module_column+1)*5)
 	)
 	{
-		uint8_t row = x - module_row*4;
-		uint8_t col = y - module_column*4;
+		uint8_t row = x - module_row*5;
+		uint8_t col = y - module_column*5;
 	
 		
 	
-		return row*4+col+1;
+		return row*5+col+1;
 	} 
 
 	return 0;

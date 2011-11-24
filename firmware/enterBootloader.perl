@@ -18,6 +18,6 @@ $port->baudrate(500000);
 $port->parity("none");
 $port->stopbits(1);
 
-my $return=$port->write(chr(102).chr(0xfa)."\n");
+my $return=$port->write(chr(102).chr(6)."\n");
 sleep(1);
 warn $port->read(1);
