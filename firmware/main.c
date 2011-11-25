@@ -383,24 +383,28 @@ int main (void)
 				else if(data == 0xfe)
 				{
 					// 125000 baud (u2x mode) == 90 fps
+					// hint for lpc1768 : uart pclk == cpuclk (100mhz) DLL = 4 ; DivADD = 3 ; MulVal = 12 == 1,2mbaud
 				    UBRR0L = 1;
 					UCSR0A |= (1 << U2X0);
 				}
 				else if(data == 0xfd)
 				{
 					// 833333 baud (u2x mode) == 60 fps
+					// hint for lpc1768 : uart pclk == cpuclk/2 (50Mhz) DLL = 3; DivAdd = 2; MulVal = 3 == 833333
 				    UBRR0L = 2;
 					UCSR0A |= (1 << U2X0);
 				}
 				else if(data == 0xfc)
 				{
 					// 625000 baud (u2x mode) == 45fps
+					// hint for lpc1768 : uart pclk == cpuclk/2 (50Mhz) DLL = 3; DivAdd = 4; MulVal = 6 == 625000
 				    UBRR0L = 3;
 					UCSR0A |= (1 << U2X0);
 				}
 				else if(data == 0xfb)
 				{
 					// 500000 baud (u2x mode) == 35 fps
+					// hint for lpc1768 : uart pclk == cpuclk/2 (50Mhz) DLL = 5; DivAdd = 2; MulVal = 8 == 500000
 				    UBRR0L = 4;
 					UCSR0A |= (1 << U2X0);
 				}
