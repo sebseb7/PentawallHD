@@ -254,15 +254,16 @@ int main(void)
     // set mosi/sck out
 	DDRB = (1<<DDB5)|(1<<DDB3)|(1<<DDB2);
         
+	// latch aus
+	PORTB &= ~(1<<PORTB1);
+	// blank = high (all off)
+	PORTD |= (1<<PORTD7);
+
 	//latch out
 	DDRB |= (1<<DDB1);
 	//blank out
 	DDRD |= (1<<DDD7);
                         
-	// latch aus
-	PORTB &= ~(1<<PORTB1);
-	// blank = high (all off)
-	PORTD |= (1<<PORTD7);
                                         
 	SPCR = (1<<SPE)|(1<<MSTR)|(1<<SPR0);
                                             

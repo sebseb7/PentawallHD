@@ -43,14 +43,13 @@ ISR (TIMER1_OVF_vect)
 
 int main (void)
 {
-	//make sure D1 is input;
+	//make sure D1 is input and tri-state (to not conflict with firmware upgrades)
 	DDRD &= ~(1<<DDD1);
 	PORTD &= ~(1<<PORT1);
 
 	// set mosi/sck out
 	DDRB = (1<<DDB5)|(1<<DDB3)|(1<<DDB2);
 	
-
 	// latch aus
 	PORTB &= ~(1<<PORTB1);
 	// blank = high (all LEDs off)
@@ -65,15 +64,7 @@ int main (void)
 	//SPI_Init()
 	SPCR = (1<<SPE)|(1<<MSTR)|(1<<SPR0);
 
-	//fill the RAM of the TLC with defined values
-	SetLed(0,0,0,0);
-	writeChannels();
-
-	_delay_ms(1);
-
-	// blank = low (enable LEDs)
-	PORTD &= ~(1<<PORTD7);
-	
+	// set addr bits input and enable pullups
 	DDRC &= ~(1<<PORTC0);
 	DDRC &= ~(1<<PORTC1);
 	DDRC &= ~(1<<PORTC2);
@@ -82,7 +73,9 @@ int main (void)
 	DDRD &= ~(1<<PORTD3);
 	PORTC |= (1<<PORTC0)|(1<<PORTC1)|(1<<PORTC2)|(1<<PORTC3);
 	PORTD |= (1<<PORTD2)|(1<<PORTD3);
-	// wait for the pin to synchronize
+
+
+	// wait for the pins to synchronize
 	_delay_ms(1);
 	addr = ((~PINC) & 0x0F)|(((~PIND) & 0x0C)<<2);
 	module_column = addr % (DISPLAY_WIDTH/4);
@@ -125,13 +118,16 @@ int main (void)
 	//enable interrupts
 	sei();
 
-	//make sure D1 is input;
+	//again make sure D1 is still input and tri-state
 	DDRD &= ~(1<<DDD1);
 	PORTD &= ~(1<<PORT1);
 
 
+	//set defined values and enable it
 	SetLed(0,0,0,0);
-	writeChannels();writeChannels();
+	writeChannels();
+	writeChannels();
+	_delay_ms(1);
 
 
 	// display Addr Info on startup
@@ -380,34 +376,53 @@ int main (void)
 				}
 				else if(data == 0xfa)
 				{
-					UBRR0L = 0;
+					// 1250000 baud == 90 fps
+				    UBRR0L = 0;
+					UCSR0A &= ~(1 << U2X0);
 				}
 				else if(data == 0xfe)
 				{
-					// jump to bootloader
-					//GPIOR2=255;
-					//AppPtr_t AppStartPtr = (AppPtr_t)0x1800; 
-					//AppStartPtr();
+					// 125000 baud (u2x mode) == 90 fps
+				    UBRR0L = 1;
+					UCSR0A |= (1 << U2X0);
+				}
+				else if(data == 0xfd)
+				{
+					// 833333 baud (u2x mode) == 60 fps
+				    UBRR0L = 2;
+					UCSR0A |= (1 << U2X0);
+				}
+				else if(data == 0xfc)
+				{
+					// 625000 baud (u2x mode) == 45fps
+				    UBRR0L = 3;
+					UCSR0A |= (1 << U2X0);
+				}
+				else if(data == 0xfb)
+				{
+					// 500000 baud (u2x mode) == 35 fps
+				    UBRR0L = 4;
+					UCSR0A |= (1 << U2X0);
 				}
 				else
 				{
 					//disable UART for a few seconds
 			        UCSR0B &= ~(1 << RXCIE0);
 				    UCSR0B &= ~(1 << RXEN0);
-					SetLed(0,0,200,0);
+					SetLed(0,0,0,150);
 					writeChannels();
 					for(uint8_t i = 0;i < 16;i++)
 					{
 						_delay_ms(0x3ff);
-						SetLed(i+1,0,0x50,0);
+						SetLed(i+1,0,150,0);
 						writeChannels();
 						_delay_ms(0x3ff);
-						SetLed(i+1,0x50,0,0);
+						SetLed(i+1,150,0,0);
 						writeChannels();
 					}
 					_delay_ms(0x1ff);
 					SetLed(0,0,0,0);
-				writeChannels();
+					writeChannels();
 				    UCSR0B |= (1 << RXEN0);
 			        UCSR0B |= (1 << RXCIE0);
 					// sleep for bootloader of differend device display progress on LEDs
