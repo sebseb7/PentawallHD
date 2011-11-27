@@ -113,7 +113,8 @@ int main (void)
 	TCCR1A |= (1<<WGM10)|(1<<WGM11);
 	TCCR1B |= (1<<WGM12)|(1<<WGM13)|(1<<CS11);//|(1<<CS10);
 	//this is one cycle length of the TLC (2560)
-	OCR1A = 2780; //2780 looks good
+//	OCR1A = 2780; //2780 looks good
+	OCR1A = 2580; //2780 looks good
 	//enable interrupt
 	TIMSK1 |= (1<<TOIE1);
 	
