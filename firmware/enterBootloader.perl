@@ -18,6 +18,18 @@ $port->baudrate(500000);
 $port->parity("none");
 $port->stopbits(1);
 
-my $return=$port->write(chr(102).chr(6)."\n");
-sleep(1);
+my $return=$port->write(chr(102).esc(chr(35))."\n");
 warn $port->read(1);
+
+sub esc($)
+{
+    my $data = shift;
+    
+    
+	$data =~ s/e/\x65\x3/go;
+	$data =~ s/\x23/\x65\x1/go;
+	$data =~ s/B/\x65\x2/go;
+	$data =~ s/f/\x65\x4/go;
+                                                            
+	return $data;
+}

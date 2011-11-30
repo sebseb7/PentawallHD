@@ -105,7 +105,8 @@ int main (void)
 	TCCR1A |= (1<<WGM10)|(1<<WGM11);
 	TCCR1B |= (1<<WGM12)|(1<<WGM13)|(1<<CS11);//|(1<<CS10);
 	//this is one cycle length of the TLC (2560)
-	OCR1A = 2780; //2780 looks good
+//	OCR1A = 2780; //2780 looks good
+	OCR1A = 2580; //2780 looks good
 	//enable interrupt
 	TIMSK1 |= (1<<TOIE1);
 	
@@ -177,7 +178,7 @@ int main (void)
 			uint8_t	a_nr = pixelIsOurs(ax+1,ay+1);
 			if(a_nr != 0)
 			{
-				SetLed(a_nr,0,100,0);
+				SetLed(a_nr,0,0,100);
 				writeChannels();
 			}
 			else
@@ -194,7 +195,7 @@ int main (void)
 			uint8_t	a_nr = pixelIsOurs(ax+1,ay+1);
 			if(a_nr != 0)
 			{
-				SetLed(a_nr,0,0,100);
+				SetLed(a_nr,0,100,0);
 				writeChannels();
 			}
 			else
@@ -415,14 +416,14 @@ int main (void)
 					writeChannels();
 					for(uint8_t i = 0;i < 16;i++)
 					{
-						_delay_ms(0x3ff);
+						_delay_ms(0xff);
 						SetLed(i+1,0,150,0);
 						writeChannels();
-						_delay_ms(0x3ff);
+						_delay_ms(0xff);
 						SetLed(i+1,150,0,0);
 						writeChannels();
 					}
-					_delay_ms(0x1ff);
+					_delay_ms(0xff);
 					SetLed(0,0,0,0);
 					writeChannels();
 				    UCSR0B |= (1 << RXEN0);
