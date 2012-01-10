@@ -13,44 +13,44 @@ volatile uint8_t xon = 0;
 
 ISR (USART_RX_vect)
 {
-        int diff;
-        uint8_t c;
-        c=UDR0;
-        diff = rxhead0 - rxtail0;
-        if (diff < 0) diff += UART_RXBUFSIZE;
-        if (diff < UART_RXBUFSIZE -1)
-        {
-            *rxhead0 = c;
-            ++rxhead0;
-            if (rxhead0 == (rxbuf0 + UART_RXBUFSIZE)) rxhead0 = rxbuf0;
-            if((diff > 100)&&(xon==0))
-			{
-				xon=1;
-				//set the CTS pin
-			}
-        }
+	int diff;
+	uint8_t c;
+	c=UDR0;
+	diff = rxhead0 - rxtail0;
+	if (diff < 0) diff += UART_RXBUFSIZE;
+	if (diff < UART_RXBUFSIZE -1)
+	{
+		*rxhead0 = c;
+		++rxhead0;
+		if (rxhead0 == (rxbuf0 + UART_RXBUFSIZE)) rxhead0 = rxbuf0;
+		if((diff > 100)&&(xon==0))
+		{
+			xon=1;
+			//set the CTS pin
+		}
+	}
 }
 
 
 void USART0_Init (void)
 {
 	// set clock divider
-//	#undef BAUD
-//	#define BAUD 1000000
-//#	#define BAUD 1000000
-//	#include <util/setbaud.h>
-//	UBRR0H = UBRRH_VALUE;
-//	UBRR0L = UBRRL_VALUE;
+	//	#undef BAUD
+	//	#define BAUD 1000000
+	//#	#define BAUD 1000000
+	//	#include <util/setbaud.h>
+	//	UBRR0H = UBRRH_VALUE;
+	//	UBRR0L = UBRRL_VALUE;
 
 	UBRR0H = 0;
 	UBRR0L = 4;
-	
-//#if USE_2X
+
+	//#if USE_2X
 	UCSR0A |= (1 << U2X0);	// enable double speed operation
-//#else
-//	UCSR0A &= ~(1 << U2X0);	// disable double speed operation
-//#endif
-	
+	//#else
+	//	UCSR0A &= ~(1 << U2X0);	// disable double speed operation
+	//#endif
+
 
 	// flush receive buffer
 	while ( UCSR0A & (1 << RXC0) ) UDR0;
@@ -63,7 +63,7 @@ void USART0_Init (void)
 
 	UCSR0B |= (1 << RXEN0);
 	UCSR0B &= ~(1 << TXEN0);
-//	UCSR0B |= (1 << RXEN0) | (1 << TXEN0);
+	//	UCSR0B |= (1 << RXEN0) | (1 << TXEN0);
 	UCSR0B |= (1 << RXCIE0);
 
 	rxhead0 = rxtail0 = rxbuf0;
@@ -81,16 +81,16 @@ void USART0_putc (char c)
 
 uint8_t USART0_Getc_nb(uint8_t *c)
 {
-    if (rxhead0==rxtail0) return 0;
-    *c = *rxtail0;
-    if (++rxtail0 == (rxbuf0 + UART_RXBUFSIZE)) rxtail0 = rxbuf0;
+	if (rxhead0==rxtail0) return 0;
+	*c = *rxtail0;
+	if (++rxtail0 == (rxbuf0 + UART_RXBUFSIZE)) rxtail0 = rxbuf0;
 
-    uint8_t diff = rxhead0 - rxtail0;
+	uint8_t diff = rxhead0 - rxtail0;
 	if((diff < 10)&&(xon==1))
 	{
 		xon=0;
 		//set the CTS pin
 	}
 
-    return 1;
+	return 1;
 }

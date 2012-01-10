@@ -24,7 +24,7 @@
 *
 ******************************************************************************/
 
- 
+
 /* MCU frequency */
 #ifndef F_CPU
 #define F_CPU 20000000
@@ -147,7 +147,7 @@ static inline uint16_t writeFlashPage(uint16_t waddr, pagebuf_t size)
 
 		baddr += 2;			// Select next word in memory
 		size -= 2;			// Reduce number of bytes to write by two
-	} while (size);				// Loop until all bytes written
+	} while (size);			// Loop until all bytes written
 
 	boot_page_write(pagestart);
 	boot_spm_busy_wait();
@@ -164,7 +164,7 @@ static inline uint16_t writeEEpromPage(uint16_t address, pagebuf_t size)
 		eeprom_write_byte( (uint8_t*)address, *tmp++ );
 		address++;			// Select next byte
 		size--;				// Decreas number of bytes to write
-	} while (size);				// Loop until all bytes written
+	} while (size);			// Loop until all bytes written
 
 	// eeprom_busy_wait();
 
@@ -198,9 +198,9 @@ static inline uint16_t readFlashPage(uint16_t waddr, pagebuf_t size)
 		}
 #endif
 		sendchar(data);			// send LSB
-		sendchar((data >> 8));		// send MSB
-		baddr += 2;			// Select next word in memory
-		size -= 2;			// Subtract two bytes from number of bytes to read
+		sendchar((data >> 8));	// send MSB
+		baddr += 2;				// Select next word in memory
+		size -= 2;				// Subtract two bytes from number of bytes to read
 	} while (size);				// Repeat until block has been read
 
 	return baddr>>1;
@@ -212,7 +212,7 @@ static inline uint16_t readEEpromPage(uint16_t address, pagebuf_t size)
 		sendchar( eeprom_read_byte( (uint8_t*)address ) );
 		address++;
 		size--;				// Decrease number of bytes to read
-	} while (size);				// Repeat until block has been read
+	} while (size);			// Repeat until block has been read
 
 	return address;
 }
@@ -236,7 +236,7 @@ int main(void)
 
 #ifdef WDT_OFF_SPECIAL
 #warning "using target specific watchdog_off"
-    bootloader_wdt_off();
+	bootloader_wdt_off();
 #else
 	cli();
 	wdt_reset();
@@ -254,7 +254,7 @@ int main(void)
 	PORTD |= (1<<PORTD4);
 	//blank out
 	DDRD |= (1<<DDD4);
-                        
+						
 
 	// Set baud rate
 	UART_BAUD_HIGH = (UART_CALC_BAUDRATE(BAUDRATE)>>8) & 0xFF;
@@ -277,10 +277,10 @@ int main(void)
 	
 
 	if(GPIOR2 != 0)
-    {
+	{
 		GPIOR2=0;
 	}
-                        
+
 
 	for(;;) {
 		val = recvchar();
@@ -288,22 +288,25 @@ int main(void)
 		if (val == 'a') {
 			sendchar('Y');			// Autoincrement is quicker
 
+		} 
 		//write address
-		} else if (val == 'A') {
+		else if (val == 'A') {
 			address = recvchar();		//read address 8 MSB
 			address = (address<<8) | recvchar();
 			sendchar('\r');
 
+		} 
 		// Buffer load support
-		} else if (val == 'b') {
-			sendchar('Y');					// Report buffer load supported
+		else if (val == 'b') {
+			sendchar('Y');								// Report buffer load supported
 			sendchar((sizeof(gBuffer) >> 8) & 0xFF);	// Report buffer size in bytes
 			sendchar(sizeof(gBuffer) & 0xFF);
 
+		} 
 		// Start buffer load
-		} else if (val == 'B') {
+		else if (val == 'B') {
 			pagebuf_t size;
-			size = recvchar() << 8;				// Load high byte of buffersize
+			size = recvchar() << 8;			// Load high byte of buffersize
 			size |= recvchar();				// Load low byte of buffersize
 			val = recvchar();				// Load memory type ('E' or 'F')
 			recvBuffer(size);
@@ -319,10 +322,11 @@ int main(void)
 				sendchar(0);
 			}
 
+		} 
 		// Block read
-		} else if (val == 'g') {
+		else if (val == 'g') {
 			pagebuf_t size;
-			size = recvchar() << 8;				// Load high byte of buffersize
+			size = recvchar() << 8;			// Load high byte of buffersize
 			size |= recvchar();				// Load low byte of buffersize
 			val = recvchar();				// Get memtype
 
@@ -332,64 +336,76 @@ int main(void)
 				address = readEEpromPage(address, size);
 			}
 
+		} 
 		// Chip erase
- 		} else if (val == 'e') {
+		else if (val == 'e') {
 			if (device == DEVTYPE) {
 				eraseFlash();
 			}
 			sendchar('\r');
 
+		} 
 		// Exit upgrade
-		} else if (val == 'E') {
+		else if (val == 'E') {
 			wdt_enable(EXIT_WDT_TIME); // Enable Watchdog Timer to give reset
 			sendchar('\r');
 
+		} 
 		// Enter programming mode
-		} else if (val == 'P') {
+		else if (val == 'P') {
 			sendchar('\r');
 
+		} 
 		// Leave programming mode
-		} else if (val == 'L') {
+		else if (val == 'L') {
 			sendchar('\r');
 
+		} 
 		// return programmer type
-		} else if (val == 'p') {
+		else if (val == 'p') {
 			sendchar('S');		// always serial programmer
 
+		} 
 		// Return device type
-		} else if (val == 't') {
+		else if (val == 't') {
 			sendchar(DEVTYPE);
 			sendchar(0);
 
+		} 
 		// clear and set LED ignored
-		} else if ((val == 'x') || (val == 'y')) {
+		else if ((val == 'x') || (val == 'y')) {
 			recvchar();
 			sendchar('\r');
 
+		} 
 		// set device
-		} else if (val == 'T') {
+		else if (val == 'T') {
 			device = recvchar();
 			sendchar('\r');
 
+		} 
 		// Return software identifier
-		} else if (val == 'S') {
+		else if (val == 'S') {
 			send_boot();
 
+		} 
 		// Return Software Version
-		} else if (val == 'V') {
+		else if (val == 'V') {
 			sendchar(VERSION_HIGH);
 			sendchar(VERSION_LOW);
 
+		} 
 		// Return Signature Bytes (it seems that 
 		// AVRProg expects the "Atmel-byte" 0x1E last
 		// but shows it first in the dialog-window)
-		} else if (val == 's') {
+		else if (val == 's') {
 			sendchar(SIG_BYTE3);
 			sendchar(SIG_BYTE2);
 			sendchar(SIG_BYTE1);
 
+		} 
 		/* ESC */
-		} else if(val != 0x1b) {
+		else if(val != 0x1b) {
 			sendchar('?');
 		}
 	}

@@ -20,7 +20,7 @@
 //compute our position from this using addr
 #define DISPLAY_WIDTH 24
 #define DISPLAY_HEIGHT 24
-                                                                                                                                 // BLANC == PB2
+
 // XLAT  == PD5
 // SCLK == SCK/PB7
 // SIN == MOSI/PB5
@@ -59,40 +59,40 @@ int main (void)
 	DDRD |= (1<<DDD4);
 
 
-	
+
 	//SPI_Init()
 	SPCR = (1<<SPE)|(1<<MSTR)|(1<<SPR0);
 
 
 	//enable pullups ununsed pins
-//	PORTD |= (1<<PORTD4);
-//	PORTD |= (1<<PORTD5);
-//	PORTD |= (1<<PORTD6);
-//	PORTB |= (1<<PORTB0);
-//	PORTB |= (1<<PORTB2);
-//	PORTC |= (1<<PORTC4);
-//	PORTC |= (1<<PORTC5);
-	
+	//	PORTD |= (1<<PORTD4);
+	//	PORTD |= (1<<PORTD5);
+	//	PORTD |= (1<<PORTD6);
+	//	PORTB |= (1<<PORTB0);
+	//	PORTB |= (1<<PORTB2);
+	//	PORTC |= (1<<PORTC4);
+	//	PORTC |= (1<<PORTC5);
+
 	//disable input buffers on unused pins
-//	DIDR1 |= (1<<AIN0D);
-//	DIDR0 |= (1<<ADC4D);
-//	DIDR0 |= (1<<ADC5D);
-	
+	//	DIDR1 |= (1<<AIN0D);
+	//	DIDR0 |= (1<<ADC4D);
+	//	DIDR0 |= (1<<ADC5D);
+
 	//disable unused hardware (twi,adc,acd,timer0,timer2)
-//	PRR |= (1<<PRTWI)|(1<<PRADC)|(1<<PRTIM0)|(1<<PRTIM2);
-//	ACSR |= (1<<ACD); 
+	//	PRR |= (1<<PRTWI)|(1<<PRADC)|(1<<PRTIM0)|(1<<PRTIM2);
+	//	ACSR |= (1<<ACD); 
 
 	//timer1 for tlc sync
 
 	//set to FastPWM Mode & prescaler 8
-//	TCCR1A |= (1<<WGM10)|(1<<WGM11);
-//	TCCR1B |= (1<<WGM12)|(1<<WGM13)|(1<<CS11);//|(1<<CS10);
+	//	TCCR1A |= (1<<WGM10)|(1<<WGM11);
+	//	TCCR1B |= (1<<WGM12)|(1<<WGM13)|(1<<CS11);//|(1<<CS10);
 	//this is one cycle length of the TLC (2560)
-//	OCR1A = 2780; //2780 looks good
-//	OCR1A = 2580; //2780 looks good
+	//	OCR1A = 2780; //2780 looks good
+	//	OCR1A = 2580; //2780 looks good
 	//enable interrupt
-//	TIMSK1 |= (1<<TOIE1);
-	
+	//	TIMSK1 |= (1<<TOIE1);
+
 
 	//grayscale clock
 	TCCR0A |= (1<<COM0A0)|(1<<WGM01)|(1<<WGM00);
@@ -101,17 +101,17 @@ int main (void)
 
 
 	while(1);
-/*	{
+	/*	{
 		PORTB |= (1<<PORTB3);
 		_delay_ms(1);
 		PORTB &= ~(1<<PORTB3);
 		_delay_ms(1);
 
-	}*/
+		}*/
 
 	//enable UART RX
 	USART0_Init();
-	
+
 	//enable interrupts
 	sei();
 
@@ -199,21 +199,21 @@ int main (void)
 		}
 	}
 	writeChannels();
-	
-	
+
+
 	uint8_t pixel_x = 0;
 	uint8_t pixel_y = 0;
 	uint8_t pixel_r = 0;
 	uint8_t pixel_g = 0;
 	uint8_t pixel_b = 0;
 	uint8_t pixel_nr = 0;
-	
+
 	uint8_t frameBuffer[16*3];
 	for(uint8_t i = 0;i<(16*3);i++)
 	{
 		frameBuffer[i]=0;
 	}
-	
+
 	uint8_t data = 0;  
 	uint8_t state = 0;
 	uint8_t escape = 0;
@@ -276,8 +276,8 @@ int main (void)
 					data = 0x66;
 				}
 			}
-			
-		
+
+
 			if(state == 1)
 			{
 				if(idx == 0)
@@ -313,7 +313,7 @@ int main (void)
 					}
 				}
 				idx++;
-				
+
 			}
 
 			if(state == 2)
@@ -324,9 +324,9 @@ int main (void)
 				pixel_nr = pixelIsOurs(x_state+1,y_state+1);
 				if(pixel_nr != 0)
 				{
-						frameBuffer[((pixel_nr-1)*3)+color_state] = data;
+					frameBuffer[((pixel_nr-1)*3)+color_state] = data;
 				}
-				
+
 				color_state++;
 				if(color_state == 3) 
 				{
@@ -369,42 +369,42 @@ int main (void)
 				else if(data == 0xfa)
 				{
 					// 1250000 baud == 90 fps
-				    UBRR0L = 0;
+					UBRR0L = 0;
 					UCSR0A &= ~(1 << U2X0);
 				}
 				else if(data == 0xfe)
 				{
 					// 125000 baud (u2x mode) == 90 fps
 					// hint for lpc1768 : uart pclk == cpuclk (100mhz) DLL = 4 ; DivADD = 3 ; MulVal = 12 == 1,2mbaud
-				    UBRR0L = 1;
+					UBRR0L = 1;
 					UCSR0A |= (1 << U2X0);
 				}
 				else if(data == 0xfd)
 				{
 					// 833333 baud (u2x mode) == 60 fps
 					// hint for lpc1768 : uart pclk == cpuclk/2 (50Mhz) DLL = 3; DivAdd = 2; MulVal = 3 == 833333
-				    UBRR0L = 2;
+					UBRR0L = 2;
 					UCSR0A |= (1 << U2X0);
 				}
 				else if(data == 0xfc)
 				{
 					// 625000 baud (u2x mode) == 45fps
 					// hint for lpc1768 : uart pclk == cpuclk/2 (50Mhz) DLL = 3; DivAdd = 4; MulVal = 6 == 625000
-				    UBRR0L = 3;
+					UBRR0L = 3;
 					UCSR0A |= (1 << U2X0);
 				}
 				else if(data == 0xfb)
 				{
 					// 500000 baud (u2x mode) == 35 fps
 					// hint for lpc1768 : uart pclk == cpuclk/2 (50Mhz) DLL = 5; DivAdd = 2; MulVal = 8 == 500000
-				    UBRR0L = 4;
+					UBRR0L = 4;
 					UCSR0A |= (1 << U2X0);
 				}
 				else
 				{
 					//disable UART for a few seconds
-			        UCSR0B &= ~(1 << RXCIE0);
-				    UCSR0B &= ~(1 << RXEN0);
+					UCSR0B &= ~(1 << RXCIE0);
+					UCSR0B &= ~(1 << RXEN0);
 					SetLed(0,0,0,150);
 					writeChannels();
 					for(uint8_t i = 0;i < 16;i++)
@@ -419,8 +419,8 @@ int main (void)
 					_delay_ms(0xff);
 					SetLed(0,0,0,0);
 					writeChannels();
-				    UCSR0B |= (1 << RXEN0);
-			        UCSR0B |= (1 << RXCIE0);
+					UCSR0B |= (1 << RXEN0);
+					UCSR0B |= (1 << RXCIE0);
 					// sleep for bootloader of differend device display progress on LEDs
 				}
 				state = 0;
@@ -440,21 +440,22 @@ uint8_t pixelIsOurs(uint8_t x,uint8_t y)
 {
 	x--;
 	y--;
-	
+
 	if( 
-		(x >=  module_row      *4) && 
-		(x <  (module_row+1)   *4) &&
-		(y >=  module_column   *4) && 
-		(y <  (module_column+1)*4)
+			(x >=  module_row      *4) && 
+			(x <  (module_row+1)   *4) &&
+			(y >=  module_column   *4) && 
+			(y <  (module_column+1)*4)
 	)
 	{
 		uint8_t row = x - module_row*4;
 		uint8_t col = y - module_column*4;
-	
-		
-	
+
+
+
 		return row*4+col+1;
 	} 
 
 	return 0;
+	A
 }

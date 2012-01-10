@@ -2,7 +2,7 @@
 #define _MEGA644P_H_
 
 /* I (M. Thomas) could not find an official Boot-ID 
-   for the ATmega644P so pretend it's an ATmega64 */
+ * for the ATmega644P so pretend it's an ATmega64 */
 /* Part-Code ISP */
 #define DEVTYPE_ISP     0x45
 /* Part-Code Boot */

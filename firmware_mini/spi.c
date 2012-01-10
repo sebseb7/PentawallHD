@@ -65,9 +65,9 @@ void SetLed(uint8_t led,uint8_t red,uint8_t green, uint8_t blue)
 			ch[idx[i]*3+1]=pgm_read_word(pwmtable_8+green);
 			ch[idx[i]*3]=pgm_read_word(pwmtable_8+red);
 		}
-	
+
 	}
-	
+
 	dirty = 1;
 }
 
@@ -119,7 +119,7 @@ void writeChannels(void)
 			SPI_send((ch[i*2-1]<<4)|(ch[i*2-2]>>8));
 			SPI_send(ch[i*2-2]);
 		}
-		
+
 		dirty2 = 1;
 	}
 
