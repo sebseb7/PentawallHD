@@ -96,8 +96,21 @@ int main (void)
 
 	//grayscale clock
 	TCCR0A |= (1<<COM0A0)|(1<<WGM01)|(1<<WGM00);
-	TCCR0B |= (1<<WGM02)|(1<<CS00);
-	OCR0A = 1;
+	TCCR0B |= (1<<WGM02)|(1<<CS00)|(1<<CS02);
+	OCR0A = 255;
+
+	SetLed(0,0,0,0);
+	writeChannels();
+
+		SetLed(1,10,10,255);
+		writeChannels();
+	while(1)
+	{
+//		PORTD &= ~(1<<PORTD4);
+		_delay_ms(300);
+//		PORTD |= (1<<PORTD4);
+		_delay_ms(300);
+	}
 
 
 	while(1);
@@ -457,5 +470,4 @@ uint8_t pixelIsOurs(uint8_t x,uint8_t y)
 	} 
 
 	return 0;
-	A
 }

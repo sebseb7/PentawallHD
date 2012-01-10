@@ -22,7 +22,7 @@ FUSE_SETTINGS = -U lfuse:w:0xd6:m -U hfuse:w:0xdf:m
 # Output format. (can be srec, ihex, binary)
 FORMAT = ihex
 
-TARGET = pentawallhd
+TARGET = pentawall_mini
 
 
 # Optimization level, can be [0, 1, 2, 3, s]. 0 turns off optimization.

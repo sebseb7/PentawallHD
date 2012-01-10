@@ -87,40 +87,69 @@ void writeChannels(void)
 	if(dirty2 == 1)
 	{
 		dirty2 = 0;
-		PORTD |= (1<<PORTD7);//blanc on
-		PORTB |= (1<<PORTB1); // latch on
-		asm volatile("nop");
-		asm volatile("nop");
-		asm volatile("nop");
-		asm volatile("nop");
-		asm volatile("nop");
-		PORTB &= ~(1<<PORTB1); // latch off
-		PORTD &= ~(1<<PORTD7);//blanc off
+//		PORTD |= (1<<PORTD7);//blanc on
+//		PORTB |= (1<<PORTB1); // latch on
+//		asm volatile("nop");
+//		asm volatile("nop");
+//		asm volatile("nop");
+//		asm volatile("nop");
+//		asm volatile("nop");
+//		PORTB &= ~(1<<PORTB1); // latch off
+//		PORTD &= ~(1<<PORTD7);//blanc off
 	}
 	else
 	{
-		PORTD |= (1<<PORTD7);//blanc on
-		asm volatile("nop");
-		asm volatile("nop");
-		asm volatile("nop");
-		asm volatile("nop");
-		asm volatile("nop");
-		PORTD &= ~(1<<PORTD7);//blanc off
+//		PORTD |= (1<<PORTD7);//blanc on
+//		asm volatile("nop");
+//		asm volatile("nop");
+//		asm volatile("nop");
+//		asm volatile("nop");
+//		asm volatile("nop");
+//		PORTD &= ~(1<<PORTD7);//blanc off
 	}
 
 
-	if(dirty == 1)
-	{
-		dirty = 0;
+//	if(dirty == 1)
+//	{
+//		dirty = 0;
+
+		PORTD &= (1<<PORTD5);
+
 
 		for(uint8_t i = 24;i>0;i--)
 		{
-			SPI_send(ch[i*2-1]>>4);
-			SPI_send((ch[i*2-1]<<4)|(ch[i*2-2]>>8));
-			SPI_send(ch[i*2-2]);
+//			SPI_send(ch[i*2-1]>>4);
+//			SPI_send((ch[i*2-1]<<4)|(ch[i*2-2]>>8));
+//			SPI_send(ch[i*2-2]);
+			SPI_send(0);
+			SPI_send(0);
+			SPI_send(0);
 		}
 
-		dirty2 = 1;
-	}
+		
+
+		PORTD &= ~(1<<PORTD4);
+		asm volatile("nop");
+		asm volatile("nop");
+		asm volatile("nop");
+		asm volatile("nop");
+		asm volatile("nop");
+		asm volatile("nop");
+
+		PORTD |= (1<<PORTD5);
+
+		asm volatile("nop");
+		asm volatile("nop");
+		asm volatile("nop");
+		asm volatile("nop");
+		asm volatile("nop");
+		asm volatile("nop");
+
+		PORTD &= (1<<PORTD5);
+
+		PORTD |= (1<<PORTD4);
+
+//		dirty2 = 1;
+//	}
 
 }

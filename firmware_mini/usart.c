@@ -11,7 +11,7 @@ volatile static uint8_t *volatile rxhead0, *volatile rxtail0;
 volatile uint8_t xon = 0;
 
 
-ISR (USART_RX_vect)
+ISR (USART0_RX_vect)
 {
 	int diff;
 	uint8_t c;
