@@ -43,10 +43,10 @@ ISR (TIMER1_OVF_vect)
 int main (void)
 {
 	// set mosi/sck out
-	DDRB = (1<<DDB5)|(1<<DDB7);
+	DDRB |= (1<<DDB5)|(1<<DDB7);
 
 	// clock output (OC0A)
-	DDRB = (1<<DDB3);
+	DDRB |= (1<<DDB3);
 
 	// latch aus
 	PORTD &= ~(1<<PORTD5);
@@ -69,7 +69,7 @@ int main (void)
 	//	PORTD |= (1<<PORTD5);
 	//	PORTD |= (1<<PORTD6);
 	//	PORTB |= (1<<PORTB0);
-	//	PORTB |= (1<<PORTB2);
+		PORTB |= (1<<PORTB4);//pull slave select high
 	//	PORTC |= (1<<PORTC4);
 	//	PORTC |= (1<<PORTC5);
 
@@ -96,20 +96,40 @@ int main (void)
 
 	//grayscale clock
 	TCCR0A |= (1<<COM0A0)|(1<<WGM01)|(1<<WGM00);
-	TCCR0B |= (1<<WGM02)|(1<<CS00)|(1<<CS02);
-	OCR0A = 255;
+	TCCR0B |= (1<<WGM02)|(1<<CS00);
+	OCR0A = 1;
 
 	SetLed(0,0,0,0);
 	writeChannels();
 
-		SetLed(1,10,10,255);
-		writeChannels();
+	_delay_ms(1);
+	writeDC();
+	_delay_ms(1);
+
+	PORTD |= (1<<PORTD4);
+
+	uint8_t i = 0;
 	while(1)
 	{
-//		PORTD &= ~(1<<PORTD4);
-		_delay_ms(300);
-//		PORTD |= (1<<PORTD4);
-		_delay_ms(300);
+		i++;
+		SetLed(1,i,0,0);
+		SetLed(2,i+50,0,0);
+		SetLed(3,i+100,0,0);
+		SetLed(4,i+150,0,0);
+		SetLed(5,0,i+150,0);
+		SetLed(6,0,i,0);
+		SetLed(7,0,i+100,0);
+		SetLed(8,0,i+50,0);
+		SetLed(9,0,0,i+100);
+		SetLed(10,0,0,i+50);
+		SetLed(11,0,0,i+150);
+		SetLed(12,0,0,i);
+		SetLed(13,i,i,i+100);
+		SetLed(14,i,i+100,i);
+		SetLed(15,i+100,i,i);
+		SetLed(16,i+50,i,i+50);
+		writeChannels();
+		_delay_ms(30);
 	}
 
 
