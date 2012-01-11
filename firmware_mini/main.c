@@ -17,10 +17,6 @@
 #include "usart.h"
 
 
-//compute our position from this using addr
-#define DISPLAY_WIDTH 24
-#define DISPLAY_HEIGHT 24
-
 // XLAT  == PD5
 // SCLK == SCK/PB7
 // SIN == MOSI/PB5
@@ -28,17 +24,6 @@
 
 
 typedef void (*AppPtr_t)(void) __attribute__ ((noreturn)); 
-
-uint8_t pixelIsOurs(uint8_t,uint8_t);
-uint8_t volatile pushData = 0;
-uint8_t addr = 0;
-uint8_t module_column = 0;
-uint8_t module_row    = 0;
-
-ISR (TIMER1_OVF_vect)
-{
-	pushData = 1;
-}
 
 int main (void)
 {
@@ -82,35 +67,39 @@ int main (void)
 	//	PRR |= (1<<PRTWI)|(1<<PRADC)|(1<<PRTIM0)|(1<<PRTIM2);
 	//	ACSR |= (1<<ACD); 
 
-	//timer1 for tlc sync
 
-	//set to FastPWM Mode & prescaler 8
-	//	TCCR1A |= (1<<WGM10)|(1<<WGM11);
-	//	TCCR1B |= (1<<WGM12)|(1<<WGM13)|(1<<CS11);//|(1<<CS10);
-	//this is one cycle length of the TLC (2560)
-	//	OCR1A = 2780; //2780 looks good
-	//	OCR1A = 2580; //2780 looks good
-	//enable interrupt
-	//	TIMSK1 |= (1<<TOIE1);
-
-
-	//grayscale clock
+	//grayscale clock (mit ctc kommt man angeblich auf 10Mhz, momentan 5mhz)
 	TCCR0A |= (1<<COM0A0)|(1<<WGM01)|(1<<WGM00);
 	TCCR0B |= (1<<WGM02)|(1<<CS00);
 	OCR0A = 1;
 
 	//set defined values and enable it
 	SetLed(0,0,0,0);
-	writeChannels();
 	_delay_ms(1);
 	writeDC();
 	_delay_ms(1);
+	// pull black to activate the led outputs
 	PORTD |= (1<<PORTD4);
 
 
+	//enable UART RX
+	USART0_Init();
+
+	//enable interrupts
+	sei();
 
 
+	uint8_t pixel_nr = 0;
+	uint8_t pixel_r = 0;
+	uint8_t pixel_g = 0;
+
+	uint8_t data = 0;  
+	uint8_t escape = 0;
+	uint8_t idx = 0;
 	uint8_t i = 0;
+
+
+
 	while(1)
 	{
 		i++;
@@ -130,95 +119,17 @@ int main (void)
 		SetLed(14,i,i+100,i);
 		SetLed(15,i+100,i,i);
 		SetLed(16,i+50,i,i+50);
-		writeChannels();
+
+		flush();
 		_delay_ms(30);
-	}
 
-
-
-	//enable UART RX
-	USART0_Init();
-
-	//enable interrupts
-	sei();
-
-
-	//initialisation sequence
-
-	for(uint8_t ax = 0;ax < DISPLAY_WIDTH;ax++)
-	{
-		for(uint8_t ay = 0;ay < DISPLAY_HEIGHT;ay++)
+		if(USART0_Getc_nb(&data))
 		{
-			uint8_t	a_nr = pixelIsOurs(ax+1,ay+1);
-			if(a_nr != 0)
-			{
-				SetLed(a_nr,100,0,0);
-				writeChannels();
-			}
-			else
-			{
-				writeChannels();
-			}
-			_delay_ms(1);
+			break;		
 		}
 	}
-	for(uint8_t ax = 0;ax < DISPLAY_WIDTH;ax++)
-	{
-		for(uint8_t ay = 0;ay < DISPLAY_HEIGHT;ay++)
-		{
-			uint8_t	a_nr = pixelIsOurs(ax+1,ay+1);
-			if(a_nr != 0)
-			{
-				SetLed(a_nr,0,0,100);
-				writeChannels();
-			}
-			else
-			{
-				writeChannels();
-			}
-			_delay_ms(1);
-		}
-	}
-	for(uint8_t ax = 0;ax < DISPLAY_WIDTH;ax++)
-	{
-		for(uint8_t ay = 0;ay < DISPLAY_HEIGHT;ay++)
-		{
-			uint8_t	a_nr = pixelIsOurs(ax+1,ay+1);
-			if(a_nr != 0)
-			{
-				SetLed(a_nr,0,100,0);
-				writeChannels();
-			}
-			else
-			{
-				writeChannels();
-			}
-			_delay_ms(1);
-		}
-	}
-	writeChannels();
 
 
-	uint8_t pixel_x = 0;
-	uint8_t pixel_y = 0;
-	uint8_t pixel_r = 0;
-	uint8_t pixel_g = 0;
-	uint8_t pixel_b = 0;
-	uint8_t pixel_nr = 0;
-
-	uint8_t frameBuffer[16*3];
-	for(uint8_t i = 0;i<(16*3);i++)
-	{
-		frameBuffer[i]=0;
-	}
-
-	uint8_t data = 0;  
-	uint8_t state = 0;
-	uint8_t escape = 0;
-	uint8_t idx = 0;
-	uint8_t color_state = 0;
-	uint8_t x_state = 0;
-	uint8_t y_state = 0;
 
 
 	while(1)
@@ -228,40 +139,28 @@ int main (void)
 
 			if(data == 0x42)
 			{
-				// single pixel
-				state = 1;
+				// sync
 				idx = 0;
 				continue;
 			}
-			if(data == 0x23)
-			{
-				// full frame
-				state = 2;
-
-				color_state = 0;
-				x_state = 0;
-				y_state = 0;
-				continue;
-			}
-			if(data == 0x65)
+			else if(data == 0x65)
 			{
 				escape = 1;
 				continue;
 			}
-			if(data == 0x66)
+			else if(data == 0x66)
 			{
-				// bootloader
-				state = 3;
-				continue;
+				// jump to bootloader
+				GPIOR2=255;
+				AppPtr_t AppStartPtr = (AppPtr_t)0x1800; 
+				AppStartPtr();
 			}
+
+
 			if(escape == 1)
 			{
 				escape = 0;
-				if(data == 0x01)
-				{
-					data = 0x23;
-				}
-				else if(data == 0x02)
+				if(data == 0x02)
 				{
 					data = 0x42;
 				}
@@ -276,183 +175,26 @@ int main (void)
 			}
 
 
-			if(state == 1)
+			if(idx == 0)
 			{
-				if(idx == 0)
-				{
-					pixel_x = data;
-				}
-				if(idx == 1)
-				{
-					pixel_y = data;
-				}
-				if(idx == 2)
-				{
-					pixel_r = data;
-				}
-				if(idx == 3)
-				{
-					pixel_g = data;
-				}
-				if(idx == 4)
-				{
-					pixel_b = data;
-					if((pixel_x == 0) && (pixel_y == 0))
-					{
-						SetLed(0,pixel_r,pixel_g,pixel_b);
-					}
-					else
-					{
-						pixel_nr = pixelIsOurs(pixel_x,pixel_y);
-						if(pixel_nr != 0)
-						{
-							SetLed(pixel_nr,pixel_r,pixel_g,pixel_b);
-						}
-					}
-				}
-				idx++;
-
+				pixel_nr = data;
 			}
-
-			if(state == 2)
+			if(idx == 1)
 			{
-				// wait for our part of the frame
-
-
-				pixel_nr = pixelIsOurs(x_state+1,y_state+1);
-				if(pixel_nr != 0)
-				{
-					frameBuffer[((pixel_nr-1)*3)+color_state] = data;
-				}
-
-				color_state++;
-				if(color_state == 3) 
-				{
-					color_state = 0;
-					y_state++;
-				}
-				if(y_state == DISPLAY_WIDTH)
-				{
-					y_state=0;
-					x_state++;
-				}
-				if(x_state == DISPLAY_HEIGHT)
-				{
-					SetAllLeds(frameBuffer);
-				}
+				pixel_r = data;
 			}
-
-			if(state == 3)
+			if(idx == 2)
 			{
-				if(data == 0xff)
-				{
-					// get addr
-					// display addr on LEDs
-					SetLed(0,0,0,0);
-					for(uint8_t i = 0;i<8;i++)
-					{
-						if((addr & (1<<i))==(1<<i))
-						{
-							SetLed(i+1,0xa0,0,0);
-						}
-					}
-				}
-				else if(data == addr)
-				{
-					// jump to bootloader
-					GPIOR2=255;
-					AppPtr_t AppStartPtr = (AppPtr_t)0x1800; 
-					AppStartPtr();
-				}
-				else if(data == 0xfa)
-				{
-					// 1250000 baud == 90 fps
-					UBRR0L = 0;
-					UCSR0A &= ~(1 << U2X0);
-				}
-				else if(data == 0xfe)
-				{
-					// 125000 baud (u2x mode) == 90 fps
-					// hint for lpc1768 : uart pclk == cpuclk (100mhz) DLL = 4 ; DivADD = 3 ; MulVal = 12 == 1,2mbaud
-					UBRR0L = 1;
-					UCSR0A |= (1 << U2X0);
-				}
-				else if(data == 0xfd)
-				{
-					// 833333 baud (u2x mode) == 60 fps
-					// hint for lpc1768 : uart pclk == cpuclk/2 (50Mhz) DLL = 3; DivAdd = 2; MulVal = 3 == 833333
-					UBRR0L = 2;
-					UCSR0A |= (1 << U2X0);
-				}
-				else if(data == 0xfc)
-				{
-					// 625000 baud (u2x mode) == 45fps
-					// hint for lpc1768 : uart pclk == cpuclk/2 (50Mhz) DLL = 3; DivAdd = 4; MulVal = 6 == 625000
-					UBRR0L = 3;
-					UCSR0A |= (1 << U2X0);
-				}
-				else if(data == 0xfb)
-				{
-					// 500000 baud (u2x mode) == 35 fps
-					// hint for lpc1768 : uart pclk == cpuclk/2 (50Mhz) DLL = 5; DivAdd = 2; MulVal = 8 == 500000
-					UBRR0L = 4;
-					UCSR0A |= (1 << U2X0);
-				}
-				else
-				{
-					//disable UART for a few seconds
-					UCSR0B &= ~(1 << RXCIE0);
-					UCSR0B &= ~(1 << RXEN0);
-					SetLed(0,0,0,150);
-					writeChannels();
-					for(uint8_t i = 0;i < 16;i++)
-					{
-						_delay_ms(0xff);
-						SetLed(i+1,0,150,0);
-						writeChannels();
-						_delay_ms(0xff);
-						SetLed(i+1,150,0,0);
-						writeChannels();
-					}
-					_delay_ms(0xff);
-					SetLed(0,0,0,0);
-					writeChannels();
-					UCSR0B |= (1 << RXEN0);
-					UCSR0B |= (1 << RXCIE0);
-					// sleep for bootloader of differend device display progress on LEDs
-				}
-				state = 0;
+				pixel_g = data;
 			}
+			if(idx == 3)
+			{
+				SetLed(pixel_nr,pixel_r,pixel_g,data);
+				flush();
+			}
+			idx++;
 
-		}
-		if(pushData == 1)
-		{
-			pushData = 0;
-			writeChannels();
 		}
 	}
 }
 
-//returns 0 if that pixel is not on out tile, otherwise LED number (1..16)
-uint8_t pixelIsOurs(uint8_t x,uint8_t y)
-{
-	x--;
-	y--;
-
-	if( 
-			(x >=  module_row      *4) && 
-			(x <  (module_row+1)   *4) &&
-			(y >=  module_column   *4) && 
-			(y <  (module_column+1)*4)
-	)
-	{
-		uint8_t row = x - module_row*4;
-		uint8_t col = y - module_column*4;
-
-
-
-		return row*4+col+1;
-	} 
-
-	return 0;
-}

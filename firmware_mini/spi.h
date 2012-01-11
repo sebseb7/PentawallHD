@@ -3,9 +3,7 @@
 
 
 void SetLed(uint8_t,uint8_t,uint8_t,uint8_t);
-void SetAllLeds(uint8_t *);
-void writeChannels(void);
 void writeDC(void);
-
+void flush(void);
 
 #endif

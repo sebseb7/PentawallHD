@@ -125,24 +125,12 @@ void SetLed(uint8_t led,uint8_t red,uint8_t green, uint8_t blue)
 		}
 
 	}
-
 }
 
-void SetAllLeds(uint8_t frameBuffer[])
+void flush(void)
 {
-	for(uint8_t i = 0;i<16;i++)
-	{
-		ch[idx[i]*3]  =pgm_read_word(pwmtable_8 + frameBuffer[i*3]);
-		ch[idx[i]*3+1]=pgm_read_word(pwmtable_8 + frameBuffer[i*3+1]);
-		ch[idx[i]*3+2]=pgm_read_word(pwmtable_8 + frameBuffer[i*3+2]);
-	}
-}
-
-void writeChannels(void)
-{
-
+	
 	PORTD &= ~(1<<PORTD5);
-
 
 	for(uint8_t i = 24;i>0;i--)
 	{
@@ -154,6 +142,7 @@ void writeChannels(void)
 	asm volatile("nop");
 	asm volatile("nop");
 
+	//rising edge
 	PORTD |= (1<<PORTD5);
 
 	asm volatile("nop");
@@ -170,6 +159,7 @@ void writeChannels(void)
 void writeDC(void)
 {
 
+	//rising edge : what happens where ? 
 	PORTD |= (1<<PORTD5);
 
 	//288 bit to write
@@ -241,6 +231,7 @@ void writeDC(void)
 	asm volatile("nop");
 	asm volatile("nop");
 
+	//rising edge
 	PORTD |= (1<<PORTD5);
 
 }
