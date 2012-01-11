@@ -7,10 +7,6 @@
 #include "main.h"
 #include "spi.h"
 
-volatile uint8_t newdata = 0;
-volatile uint8_t dirty = 0;
-volatile uint8_t dirty2 = 0;
-
 uint16_t ch[48];
 
 union 
@@ -103,7 +99,6 @@ uint16_t pwmtable_8[256]  PROGMEM = {
 //led numbering (1 ist lower left, next to right)
 uint8_t idx[16] = {10,11,12,13,9,8,15,14,6,7,0,1,5,4,3,2};
 
-void writeChannels(void);
 
 void SPI_send(uint8_t cData) 
 {
@@ -131,7 +126,6 @@ void SetLed(uint8_t led,uint8_t red,uint8_t green, uint8_t blue)
 
 	}
 
-	dirty = 1;
 }
 
 void SetAllLeds(uint8_t frameBuffer[])
@@ -142,39 +136,10 @@ void SetAllLeds(uint8_t frameBuffer[])
 		ch[idx[i]*3+1]=pgm_read_word(pwmtable_8 + frameBuffer[i*3+1]);
 		ch[idx[i]*3+2]=pgm_read_word(pwmtable_8 + frameBuffer[i*3+2]);
 	}
-	dirty = 1;
 }
 
 void writeChannels(void)
 {
-	if(dirty2 == 1)
-	{
-		dirty2 = 0;
-		//		PORTD |= (1<<PORTD7);//blanc on
-		//		PORTB |= (1<<PORTB1); // latch on
-		//		asm volatile("nop");
-		//		asm volatile("nop");
-		//		asm volatile("nop");
-		//		asm volatile("nop");
-		//		asm volatile("nop");
-		//		PORTB &= ~(1<<PORTB1); // latch off
-		//		PORTD &= ~(1<<PORTD7);//blanc off
-	}
-	else
-	{
-		//		PORTD |= (1<<PORTD7);//blanc on
-		//		asm volatile("nop");
-		//		asm volatile("nop");
-		//		asm volatile("nop");
-		//		asm volatile("nop");
-		//		asm volatile("nop");
-		//		PORTD &= ~(1<<PORTD7);//blanc off
-	}
-
-
-	//	if(dirty == 1)
-	//	{
-	//		dirty = 0;
 
 	PORTD &= ~(1<<PORTD5);
 
@@ -184,12 +149,7 @@ void writeChannels(void)
 		SPI_send(ch[i*2-1]>>4);
 		SPI_send((ch[i*2-1]<<4)|(ch[i*2-2]>>8));
 		SPI_send(ch[i*2-2]);
-		//			SPI_send(0);
-		//			SPI_send(0);
-		//			SPI_send(0);
 	}
-
-
 	
 	asm volatile("nop");
 	asm volatile("nop");
@@ -205,7 +165,6 @@ void writeChannels(void)
 
 	PORTD &= ~(1<<PORTD5);
 
-	//	}
 }
 
 void writeDC(void)
@@ -270,11 +229,6 @@ void writeDC(void)
 		SPI_send(dcdata.dcbytes[i-1]);
 	}
 
-	PORTD &= ~(1<<PORTD4);
-	asm volatile("nop");
-	asm volatile("nop");
-	asm volatile("nop");
-	asm volatile("nop");
 	asm volatile("nop");
 	asm volatile("nop");
 
@@ -288,10 +242,6 @@ void writeDC(void)
 	asm volatile("nop");
 
 	PORTD |= (1<<PORTD5);
-
-	PORTD |= (1<<PORTD4);
-
-
 
 }
 

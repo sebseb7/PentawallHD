@@ -99,14 +99,16 @@ int main (void)
 	TCCR0B |= (1<<WGM02)|(1<<CS00);
 	OCR0A = 1;
 
+	//set defined values and enable it
 	SetLed(0,0,0,0);
 	writeChannels();
-
 	_delay_ms(1);
 	writeDC();
 	_delay_ms(1);
-
 	PORTD |= (1<<PORTD4);
+
+
+
 
 	uint8_t i = 0;
 	while(1)
@@ -133,49 +135,12 @@ int main (void)
 	}
 
 
-	while(1);
-	/*	{
-		PORTB |= (1<<PORTB3);
-		_delay_ms(1);
-		PORTB &= ~(1<<PORTB3);
-		_delay_ms(1);
-
-		}*/
 
 	//enable UART RX
 	USART0_Init();
 
 	//enable interrupts
 	sei();
-
-
-	//set defined values and enable it
-	SetLed(0,0,0,0);
-	writeChannels();
-	writeChannels();
-	_delay_ms(1);
-
-
-	// display Addr Info on startup
-	for(uint8_t i = 0;i<8;i++)
-	{
-		if((addr & (1<<i))==(1<<i))
-		{
-			SetLed(i+1,0xa0,0,0);
-		}
-		if((module_row & (1<<i))==(1<<i))
-		{
-			SetLed(i+9,0,0xa0,0);
-		}
-		if((module_column & (1<<i))==(1<<i))
-		{
-			SetLed(i+13,0,0,0xa0);
-		}
-	}
-	writeChannels();writeChannels();
-	_delay_ms(0xaff);
-	SetLed(0,0,0,0);
-	writeChannels();writeChannels();
 
 
 	//initialisation sequence
