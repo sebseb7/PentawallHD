@@ -91,22 +91,17 @@ static uint8_t tick(void) {
 
 	uint16_t sin1 = sini(a)/5;
 	uint16_t sin2 = sini(a*2)/3;
-	uint16_t sin3 = sini(a*16)/2;
-	uint16_t sin4 = sini(a*3)/2;
+	uint16_t sin3 = sini(a*4);
+	uint16_t sin4 = sini(a)/2;
 
 	for(y = 0; y < LED_HEIGHT; y++) 
 	{
-		uint16_t y_part =  sini(sin2+y*60)/2  + sin3;
+		uint16_t y_part =  sini(sin2+y*64)  + sin3;
 
 		for(x = 0; x < LED_WIDTH; x++) 
 		{
-			uint16_t h = sini(sin1+x*31)+ y_part;
-
-			//hsv_to_rgb();
-			//setLedXY(x, y, nr>>2,ng>>2,nb>>2);
-
-
-//			printf("%i\n",h);
+			uint16_t h = sini(sin1+x*72)+ y_part;
+			
 			setLedXY(x,y,sini((h>>4)+sin1)>>8,sini(((h>>4)+sin2)+1365)>>8,sini(((h>>4)+sin4)+2730)>>8);
 
 		}
