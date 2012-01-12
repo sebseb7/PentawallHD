@@ -27,11 +27,15 @@ TARGET = pentawall_mini
 
 # Optimization level, can be [0, 1, 2, 3, s]. 0 turns off optimization.
 # (Note: 3 is not always the best optimization level. See avr-libc FAQ.)
-OPT = 2
+
+#fast
+#OPT = 3 -finline-limit=100 -funroll-loops
+#small
+OPT = s -mcall-prologues
 
 ##########################################################################################################
 # List C source files here. (C dependencies are automatically generated.)
-SRC	= main.c spi.c usart.c
+SRC	= main.c spi.c usart.c apps/plasma_bigsin.c
 #SRC	= main.c timer.c lcd.c font8X6.c usart.c atparse.c gps.c gol.c
 ##########################################################################################################
 

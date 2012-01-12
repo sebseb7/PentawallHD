@@ -23,7 +23,35 @@
 // SOUT == MISO/PB6
 
 
+
+
 typedef void (*AppPtr_t)(void) __attribute__ ((noreturn)); 
+
+
+
+#define MAX_NUMBER_OF_ANIMATIONS 10
+
+uint8_t (*aniTick_fp[MAX_NUMBER_OF_ANIMATIONS])(void);
+uint16_t aniInterval_count[MAX_NUMBER_OF_ANIMATIONS];
+uint16_t aniInterval_duration[MAX_NUMBER_OF_ANIMATIONS];
+
+uint8_t animations = 0;
+
+void registerAnimation(uint8_t (*fp)(void),uint16_t tickInterval, uint16_t intervals)
+{
+	if(animations < MAX_NUMBER_OF_ANIMATIONS)
+	{
+		aniTick_fp[animations] = fp;
+		aniInterval_count[animations]=intervals;
+		aniInterval_duration[animations]=tickInterval;
+
+		animations++;
+	}
+}
+
+
+
+
 
 int main (void)
 {
@@ -197,4 +225,10 @@ int main (void)
 		}
 	}
 }
+
+
+void setLedXY(uint8_t x ,uint8_t y,uint8_t r,uint8_t g,uint8_t b)
+{
+
+};
 
