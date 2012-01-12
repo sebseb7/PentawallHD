@@ -6,7 +6,8 @@ BINARIES=$(SOURCES:../apps/%.c=%)
 LIB_SOURCES=$(wildcard ../libs/*.c)
 LIB_HEADERS=$(wildcard ../libs/*.h)
 
-FLAGS=--std=gnu99 -Wall
+FLAGS=--std=gnu99 -Wall  -funsigned-char -Wundef -Wsign-compare -Wunreachable-code -pedantic  -Wstrict-prototypes
+
 
 ifeq ($(UNAME), Darwin)
 	FLAGS +=  -I/Library/Frameworks/SDL.framework/Headers SDLmain.m -framework SDL -framework Cocoa
