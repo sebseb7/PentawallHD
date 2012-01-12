@@ -2,8 +2,34 @@
 #include <main.h>
 #include <stdio.h>
 
-//#include <avr/pgmspace.h>
-#include <math.h>
+
+uint8_t sin_table[256] = 
+{
+	0,0,1,2,3,3,4,5,6,7,7,8,9,10,11,11,12,13,14,15,15,16,17,18,19,19,20,21,22,23,23,24,25,26,26,
+	27,28,29,30,30,31,32,33,33,34,35,36,36,37,38,39,40,40,41,42,43,43,44,45,46,46,47,48,48,49,50,
+	51,51,52,53,54,54,55,56,56,57,58,59,59,60,61,61,62,63,64,64,65,66,66,67,68,68,69,70,70,71,72,
+	72,73,74,74,75,76,76,77,77,78,79,79,80,81,81,82,82,83,84,84,85,85,86,87,87,88,88,89,89,90,91,
+	91,92,92,93,93,94,94,95,95,96,97,97,98,98,99,99,100,100,101,101,102,102,103,103,103,104,104,
+	105,105,106,106,107,107,107,108,108,109,109,110,110,110,111,111,112,112,112,113,113,113,114,
+	114,114,115,115,116,116,116,117,117,117,117,118,118,118,119,119,119,120,120,120,120,121,121,
+	121,121,122,122,122,122,123,123,123,123,123,124,124,124,124,124,124,125,125,125,125,125,125,
+	126,126,126,126,126,126,126,126,127,127,127,127,127,127,127,127,127,127,127,127,127,127,127,
+	127,127,127,127,127,127,127,127,127
+};
+
+// input 0..1023 ; output 0..255
+uint8_t sini(uint16_t x)
+{
+	if(x > 1023)
+	{
+		x = x % 1024;
+	}
+
+	if(x < 256) return sin_table[x]+128;
+	if(x < 512) return sin_table[511-x]+128;
+	if(x < 768) return 127-sin_table[x-512];
+	return 127-sin_table[1023-x]; 
+}
 
 
 uint16_t nr, ng, nb;
@@ -56,71 +82,51 @@ void hsv_to_rgb(void)
 			R = 65535; G = p; B = q; break;				// case 5:					
 	}
 
-//	nr=pgm_read_word(&table[R>>6]);
-//	ng=pgm_read_word(&table[G>>6]);
-//	nb=pgm_read_word(&table[B>>6]);
+	//	nr=pgm_read_word(&table[R>>6]);
+	//	ng=pgm_read_word(&table[G>>6]);
+	//	nb=pgm_read_word(&table[B>>6]);
 	nr=table[R>>6];
 	ng=table[G>>6];
 	nb=table[B>>6];
 
 
 }
-//#include <stdlib.h>
-
-static int16_t sini(uint8_t x) {
-	static int16_t table[] = {
-		0, 6, 13, 19, 25, 31, 37, 43, 49, 55, 60, 66, 71, 76, 81, 86, 91, 95, 99,
-		103, 106, 110, 113, 116, 118, 121, 122, 124, 126, 127, 127, 128, 128 };
-	x = x & 127;
-	uint8_t i = x & 31;
-	int16_t ret = (x & 32) ? table[32 - i] : table[i];
-	if(x & 64) ret = -ret;
-	return ret;
-}
-static int16_t cosi(uint8_t x) { return sini(x + 32); }
-
 
 static uint8_t tick() {
-	static int _a = 0;
-	static int b = 0;
-	static uint8_t init = 0;
-
-	if(init == 0) {
-		_a = rand();
-		b = rand();
-		init = 1;
-	}
-
-	int a = _a >> 1;
-
+	static uint16_t a = 0;
 
 	uint8_t x, y;
 
-	uint8_t global_part1 = cosi(a);
-	uint8_t global_part2 = cosi(a/2);
+	uint8_t sin1 = sini(a+512);
+	uint8_t sin2 = sini(a*2);
+	uint16_t sin3 = sini(a*4)<<8;
 
-	for(y = 0; y < LED_HEIGHT; y++) {
-		
-		uint16_t y_part = 3*cosi(y*3-global_part1);
+	for(y = 0; y < LED_HEIGHT; y++) 
+	{
+		uint16_t y_part = h = 128*sini(sin2+y*20)  + sin3;
 
-		for(x = 0; x < LED_WIDTH; x++) {
-
-			h = (2*cosi(x*4-global_part2)+ y_part)*100 + 32767;
+		for(x = 0; x < LED_WIDTH; x++) 
+		{
+			h = 128*sini(sin1+x*30)+ y_part;
 
 			hsv_to_rgb();
-			
+
 			setLedXY(x, y, nr>>2,ng>>2,nb>>2);
 		}
 	}
-	_a--;
-	b = a;
+	a++;
+	if(a==1024)
+	{
+		a=0;
+	}
 	return 0;
-
 }
 
 static void init(void) ATTRIBUTES;
 void init(void) {
 	registerAnimation(tick, 6, 450);
 }
+
+
 
 
