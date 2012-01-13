@@ -147,7 +147,7 @@ AVRDUDE_WRITE_EEPROM = -U eeprom:w:$(TARGET).eep
 #avrdude -c avrispv2 -P usb -p m32 -U flash:w:blink.hex
 #AVRDUDE_FLAGS = -p m168 -F -P $(AVRDUDE_PORT) -c $(AVRDUDE_PROGRAMMER)
 AVRDUDE_FLAGS = -p $(MCU) -F -P $(AVRDUDE_PORT) -c $(AVRDUDE_PROGRAMMER)
-AVRDUDE_UFLAGS = -p atmega88 -F -P /dev/cu.usbserial-A100DDXL -c avr109 -b 230400  -v -v 
+AVRDUDE_UFLAGS = -p atmega644p -P /dev/cu.usbserial-A100DDXL -c avr109 -b 230400  -v -v 
 #AVRDUDE_UFLAGS = -p $(MCU) -P /dev/cu.usbserial-A2002QDi -c avr109 -b 230400  -v -v 
 #AVRDUDE_UFLAGS = -p $(MCU) -P /dev/cu.usbserial-A2002QDi -c avr109 -b 115200  -v -v 
 #AVRDUDE_FLAGS = -p $(MCU) -c $(AVRDUDE_PROGRAMMER)

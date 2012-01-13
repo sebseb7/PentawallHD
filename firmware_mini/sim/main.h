@@ -3,11 +3,11 @@
 
 #include <stdint.h>
 
-#define LED_WIDTH	4
-#define LED_HEIGHT	4
+#define LED_WIDTH	40
+#define LED_HEIGHT	40
 
 // multiple of 15
-#define ZOOM 105
+#define ZOOM 15
 
 
 #define SIMULATOR

@@ -103,6 +103,7 @@ int main (void)
 
 	//set defined values and enable it
 	SetLed(0,0,0,0);
+	flush();
 	_delay_ms(1);
 	writeDC();
 	_delay_ms(1);
@@ -127,6 +128,14 @@ int main (void)
 	uint8_t i = 0;
 
 
+	
+
+	while(1)
+	{
+		(*aniTick_fp[0])();
+		flush();
+		_delay_ms(33);
+	}
 
 	while(1)
 	{
@@ -230,5 +239,6 @@ int main (void)
 void setLedXY(uint8_t x ,uint8_t y,uint8_t r,uint8_t g,uint8_t b)
 {
 
+	SetLed(y*4+x+1,r,g,b);
 }
 

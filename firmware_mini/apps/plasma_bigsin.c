@@ -40,38 +40,29 @@ uint16_t sini(uint16_t x)
 static uint8_t tick(void) {
 
 	static uint16_t a = 0;
-	static uint16_t b = 0;
 	
 	uint8_t x, y;
 
-	uint16_t sin1 = sini(b);
+	uint16_t sin1 = sini(a+400);
 	uint16_t sin2 = sini(a*2);
-	uint16_t sin3 = sini(b*3);
-	uint16_t sin4 = sini(a*5)/2;
+	uint16_t sin3 = sini(a*3)/2;
 
 	for(y = 0; y < LED_HEIGHT; y++) 
 	{
-		uint16_t y_part =  sini(sin2+y*64*4)  + sin3;
-		uint16_t y_part2 =  sini(sin3+y*50)  + sin4;
-
-		y_part += sini(sin1+y*31*4);
+		uint16_t y_part =  sini(sin2+y*56*4)  + sin3;
 
 
 		for(x = 0; x < LED_WIDTH; x++) 
 		{
-			uint16_t h = sini(sin1+x*64*4)+ y_part;
-		
+			uint16_t h = sini(sin1+x*16*4)+ y_part;
 
-			setLedXY(x,y,sini((((h-y_part+y_part2))>>2)+sin1)>>8,sini(((h>>2)+sin2)+1365)>>8,sini((((h+y_part2*3)>>2)+sin4)+2730)>>8);
+			
+				setLedXY(x,y,sini(h>>2)>>8,sini((h>>2)+5461)>>8,sini((h>>2)+10921)>>8);
+//				setLedXY(x,y,sini(h>>2)>>8,sini(((h>>2)+sin2+(y_part/4))+1365)>>8,sini((((h+y_part2*3)>>2)+sin4)+2730)>>8);
 
 		}
 	}
-	a+=2;
-	b+=3;
-	if(b==16384)
-	{
-		b=0;
-	}
+	a+=1;
 	if(a==16384)
 	{
 		a=0;
