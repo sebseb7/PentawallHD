@@ -38,7 +38,6 @@ uint8_t module_row    = 0;
 
 ISR (TIMER1_OVF_vect)
 {
-//	writeChannels();
 	pushData = 1;
 }
 
@@ -289,7 +288,6 @@ int main (void)
 		
 			if(state == 1)
 			{
-				// wait for our pixel
 				if(idx == 0)
 				{
 					pixel_x = data;
