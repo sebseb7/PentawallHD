@@ -15,6 +15,7 @@
 #include "main.h"
 #include "spi.h"
 #include "usart.h"
+//#include "loader.h"
 
 
 //compute our position from this using addr
@@ -161,7 +162,7 @@ int main (void)
 			uint8_t	a_nr = pixelIsOurs(ax+1,ay+1);
 			if(a_nr != 0)
 			{
-				SetLed(a_nr,100,0,0);
+				SetLed(a_nr,0,0,100);
 				writeChannels();
 			}
 			else
@@ -178,7 +179,7 @@ int main (void)
 			uint8_t	a_nr = pixelIsOurs(ax+1,ay+1);
 			if(a_nr != 0)
 			{
-				SetLed(a_nr,0,0,100);
+				SetLed(a_nr,100,0,0);
 				writeChannels();
 			}
 			else
@@ -373,6 +374,23 @@ int main (void)
 					AppPtr_t AppStartPtr = (AppPtr_t)0x1800; 
 					AppStartPtr();
 				}
+				else if(data == addr+40)
+				{
+					// jump to internal loader
+
+				/*	TIMSK1 &= ~(1<<TOIE1);
+					UCSR0B &= ~(1<<RXCIE0);
+
+					GPIOR2=255;
+
+					start_loader();*/
+				}
+				else if(data == 0xf9)
+				{
+					// 2500000 baud == 180 fps
+				    UBRR0L = 0;
+					UCSR0A |= (1 << U2X0);
+				}
 				else if(data == 0xfa)
 				{
 					// 1250000 baud == 90 fps
@@ -381,7 +399,7 @@ int main (void)
 				}
 				else if(data == 0xfe)
 				{
-					// 125000 baud (u2x mode) == 90 fps
+					// 1250000 baud (u2x mode) == 90 fps
 					// hint for lpc1768 : uart pclk == cpuclk (100mhz) DLL = 4 ; DivADD = 3 ; MulVal = 12 == 1,2mbaud
 				    UBRR0L = 1;
 					UCSR0A |= (1 << U2X0);
@@ -416,14 +434,14 @@ int main (void)
 					writeChannels();
 					for(uint8_t i = 0;i < 16;i++)
 					{
-						_delay_ms(0xff);
+						_delay_ms(0xbf);
 						SetLed(i+1,0,150,0);
 						writeChannels();
-						_delay_ms(0xff);
+						_delay_ms(0xbf);
 						SetLed(i+1,150,0,0);
 						writeChannels();
 					}
-					_delay_ms(0xff);
+					_delay_ms(0xbf);
 					SetLed(0,0,0,0);
 					writeChannels();
 				    UCSR0B |= (1 << RXEN0);
