@@ -49,20 +49,20 @@ static uint8_t tick(void) {
 
 	for(y = 0; y < LED_HEIGHT; y++) 
 	{
-		uint16_t y_part =  sini(sin2+y*56*4)  + sin3;
+		uint16_t y_part =  sini(sin2+y*56*2)  + sin3;
 
 
 		for(x = 0; x < LED_WIDTH; x++) 
 		{
-			uint16_t h = sini(sin1+x*16*4)+ y_part;
+			uint16_t h = sini(sin1+x*16*2)+ y_part;
 
 			
-				setLedXY(x,y,sini(h>>2)>>8,sini((h>>2)+5461)>>8,sini((h>>2)+10921)>>8);
-//				setLedXY(x,y,sini(h>>2)>>8,sini(((h>>2)+sin2+(y_part/4))+1365)>>8,sini((((h+y_part2*3)>>2)+sin4)+2730)>>8);
+//				setLedXY(x,y,sini(h>>2)>>8,sini((h>>2)+5461)>>8,sini((h>>2)+10921)>>8);
+				setLedXY(x,y,sini(h>>2)>>6,sini(((h>>2)+sin2+(y_part/4))+15)>>8,sini((((h+y_part)>>2)+sin3)+2730)>>8);
 
 		}
 	}
-	a+=1;
+	a+=3;
 	if(a==16384)
 	{
 		a=0;

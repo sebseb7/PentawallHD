@@ -20,9 +20,9 @@ while(1)
 
 	(my $r2,my $g2,my $b2) = ceilingLight::hsv2rgb($h,1,1);
 	
-	my $r1 = int($r2*55);
-	my $g1 = int($g2*55);
-	my $b1 = int($b2*55);
+	my $r1 = int($r2*25);
+	my $g1 = int($g2*25);
+	my $b1 = int($b2*25);
 
 	my $sum = $r1+$g1+$b1;
 

@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-package g3d2;
+package pwhd;
 
 use strict;
 use IO::Socket;
@@ -11,7 +11,7 @@ my $window = 3;
 
 sub init()
 {
-	$socket = IO::Socket::INET->new(PeerAddr => 'pentawallhd',
+	$socket = IO::Socket::INET->new(PeerAddr => 'localhost',
 									PeerPort => 1340,
 									Proto    => "tcp",
 									Type     => SOCK_STREAM)     or die "Couldn't connect : $@\n";
