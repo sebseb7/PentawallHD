@@ -11,8 +11,8 @@ my $window = 3;
 
 sub init()
 {
-	$socket = IO::Socket::INET->new(PeerAddr => 'g3d2',
-									PeerPort => 1339,
+	$socket = IO::Socket::INET->new(PeerAddr => 'pentawallhd',
+									PeerPort => 1340,
 									Proto    => "tcp",
 									Type     => SOCK_STREAM)     or die "Couldn't connect : $@\n";
 }
@@ -23,22 +23,25 @@ sub record()
 }
 
 
-sub setPixel($$$)
+sub setPixel($$$$$)
 {
 	my $x = shift;
 	my $y = shift;
+	my $red = shift;
 	my $green = shift;
+	my $blue = shift;
 
 
-	print $socket '02'.sprintf("%02x",$x).sprintf("%02x",$y).sprintf("%1x",$green)."\r\n";
+	print $socket '02'.sprintf("%02x",$x).sprintf("%02x",$y).sprintf("%2x",$red).sprintf("%2x",$green).sprintf("%2x",$blue)."\r\n";
 }
 
 sub setAll($)
 {
+	my $red = shift;
 	my $green = shift;
+	my $blue = shift;
 
-
-	print $socket '02'.sprintf("%1x",$green)."\r\n";
+	print $socket '02'.sprintf("%2x",$red),sprintf("%2x",$green).sprintf("%2x",$blue)."\r\n";
 }
 
 sub setFrame($)
