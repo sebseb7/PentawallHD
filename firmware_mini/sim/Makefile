@@ -17,6 +17,10 @@ ifeq ($(UNAME), Linux)
 	LDFLAGS +=  -lSDL
 endif
 
+ifeq ($(UNAME), MINGW32_NT-6.1)
+	FLAGS += -L/MinGW/msys/1.0/lib -lmingw32 -lSDLmain -I/MinGW/msys/1.0/include/ /MinGW/msys/1.0/bin/SDL.dll
+endif
+
 all: $(BINARIES)
 
 clean:

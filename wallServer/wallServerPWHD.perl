@@ -13,25 +13,17 @@ use Data::Dumper;
 
 $0='pentawallHD-server';
 
-#close STDERR;
-#close STDOUT;
-#open STDOUT,'>>logfile2.txt';
-#open STDERR,'>&STDOUT';
-
-
-#02471ff
 
 #globals & configuration
 
 my $usbDevice = '/dev/cu.usbserial-A100DDXM';
-#my $usbDevice = '/dev/serial/by-id/usb-FTDI_FT232R_USB_UART_A100DDXG-if00-port0';
 my $tcpPort = 1340;
-my $buffer = '/dev/shm/pentawallHD_image';	#where to store the buffer for the webviewer
+my $buffer = '/Users/k-ot/Sites/pentawallHD_image';	#where to store the buffer for the webviewer
 my $prioLevels = 4;				#begins with level id 0
 my $defaultLevel = 1;
 my $currentPrio = 0;
 my $isRecording = 0;
-my $recordPath = '/opt/wallRecords_pentawallHD/';
+my $recordPath = '/Users/k-ot/Sites/wallRecords/';
 my $currentRecordingFile;
 my $currentRecordingTime;
 
@@ -71,7 +63,7 @@ my $serial;
 
 	foreach my $level (0..$prioLevels)
 	{
-		$frameBuffer->{$level} = '0' x ($wallHeight*$wallWidth);
+		$frameBuffer->{$level} = '000000' x ($wallHeight*$wallWidth);
 	
 	}
 	if(-f $buffer)
@@ -84,11 +76,6 @@ my $serial;
 	}
 	
 	setFrame($frameBuffer->{$defaultLevel});
-	open outfile,'>'.$buffer.'_tmp';
-	print outfile $frameBuffer->{$defaultLevel}."\n";
-	close outfile;
-	rename $buffer.'_tmp',$buffer;
-
 
 
 	while( 1 )
@@ -280,32 +267,6 @@ sub handlerequest($$$$)
 
 		setFrame($frameBuffer->{$myPrio}) if $myPrio == $currentPrio;
 
-		if($myPrio == $currentPrio)
-		{
-			open outfile,'>'.$buffer.'_tmp';
-			print outfile $frameBuffer->{$myPrio}."\n";
-			close outfile;
-			rename $buffer.'_tmp',$buffer;
-		}
-		
-		if(($isRecording)and($myPrio == $currentPrio))
-		{
-
-			if((time-$currentRecordingTime) > 60*5)
-			{
-				warn localtime(time).' autostop';
-				$isRecording=0;
-			}
-			else
-			{
-				open outfile,'>>'.$recordPath.$currentRecordingFile.'.rec';
-				print outfile int((time-$currentRecordingTime)*1000).' ';
-				print outfile $data."\r\n";
-				close outfile;
-			}
-
-		}
-		
 		return 'ok'."\r\n";
 	}
 	elsif($data =~ /^02(..)(..)(..)(..)(..)$/)
@@ -329,31 +290,6 @@ sub handlerequest($$$$)
 		}
 		setPixel($x,$CeilCh1,$red,$green,$blue) if $myPrio == $currentPrio;
 
-		if($myPrio == $currentPrio)
-		{
-			open outfile,'>'.$buffer.'_tmp';
-			print outfile $frameBuffer->{$myPrio}."\n";
-			close outfile;
-			rename $buffer.'_tmp',$buffer;
-		}
-		
-		if(($isRecording)and($myPrio == $currentPrio))
-		{
-
-			if((time-$currentRecordingTime) > 60*5)
-			{
-				warn localtime(time).' autostop';
-				$isRecording=0;
-			}
-			else
-			{
-				open outfile,'>>'.$recordPath.$currentRecordingFile.'.rec';
-				print outfile int((time-$currentRecordingTime)*1000).' ';
-				print outfile $data."\r\n";
-				close outfile;
-			}
-
-		}
 		
 		return 'ok'."\r\n";
 	}
@@ -365,33 +301,6 @@ sub handlerequest($$$$)
 		$frameBuffer->{$myPrio} = $frame;		
 
 		setFrame($frame) if $myPrio == $currentPrio;
-
-		if($myPrio == $currentPrio)
-		{
-			open outfile,'>'.$buffer.'_tmp';
-			print outfile $frameBuffer->{$myPrio}."\n";
-			close outfile;
-			rename $buffer.'_tmp',$buffer;
-		}
-
-		if(($isRecording)and($myPrio == $currentPrio))
-		{
-			
-			if((time-$currentRecordingTime) > 60*5)
-			{
-				warn localtime(time).' autostop';
-				$isRecording=0;
-			}
-			else
-			{
-				open outfile,'>>'.$recordPath.$currentRecordingFile.'.rec';
-				print outfile int((time-$currentRecordingTime)*1000).' ';
-				print outfile $data."\r\n";
-				close outfile;
-			}
-			
-		}
-
 
 		return 'ok'."\r\n";
 	}
@@ -419,12 +328,10 @@ sub handlerequest($$$$)
 		$currentRecordingTime = int time;
 		$currentRecordingFile = int time;
 		$currentRecordingFile = $1 if length($1);
-		
-		
 
-			open outfile,'>>'.$recordPath.$currentRecordingFile.'.rec';
-			print outfile '0 03'.$frameBuffer->{$myPrio}."\r\n";
-			close outfile;
+		open outfile,'>>'.$recordPath.$currentRecordingFile.'.rec';
+		print outfile '0 03'.$frameBuffer->{$myPrio}."\r\n";
+		close outfile;
 		
 		return 'ok'."\r\n";
 	}
@@ -441,38 +348,15 @@ sub handlerequest($$$$)
 		}
 		return "bad\r\n";
 	}
-	# play recorded file
-	elsif($data =~ /^07(\d+)$/)
-	{
-		my $fileid = $1;
-
-
-		#### to implement
-
-
-		return "ok\r\n";
-	}
-	# stop play
-	elsif($data =~ /^08$/)
-	{
-
-		#### to implement
-
-		return "ok\r\n";
-	}
 	elsif($data =~ /^0901$/)
 	{
 		$intermediaterequests{$host.':'.$port.':'.$lport}{'listen'} = 1;
-
-		#### to implement
 
 		return "ok\r\n";
 	}
 	elsif($data =~ /^0900$/)
 	{
 		$intermediaterequests{$host.':'.$port.':'.$lport}{'listen'} = 0;
-
-		#### to implement
 
 		return "ok\r\n";
 	}
@@ -486,8 +370,6 @@ sub handlerequest($$$$)
 			next if $intermediaterequests{$hostport}{'prio'} < $currentPrio;
 			$intermediaterequests{$hostport}{'writebuffer'} .= '09'.$data."\r\n";
 		}
-
-		#### to implement
 
 		return "ok\r\n";
 	}
@@ -526,7 +408,7 @@ sub updatePrioLevel()
 
 	foreach my $level (($currentPrio+1)..$prioLevels)
 	{
-		$frameBuffer->{$level} = '0' x ($wallHeight*$wallWidth);
+		$frameBuffer->{$level} = '000000' x ($wallHeight*$wallWidth);
 	}
 
 }
@@ -538,6 +420,31 @@ sub setPixel($$$$$)
 	my $red =  shift;
 	my $green  = shift;
 	my $blue = shift;
+
+
+	open outfile,'>'.$buffer.'_tmp';
+	print outfile $frameBuffer->{$currentPrio}."\n";
+	close outfile;
+	rename $buffer.'_tmp',$buffer;
+
+
+	if($isRecording)
+	{
+
+		if((time-$currentRecordingTime) > 60*5)
+		{
+			warn localtime(time).' autostop';
+			$isRecording=0;
+		}
+		else
+		{
+			open outfile,'>>'.$recordPath.$currentRecordingFile.'.rec';
+			print outfile int((time-$currentRecordingTime)*1000).' ';
+			print outfile '02'.sprintf("%02x",$x).sprintf("%02x",$y).sprintf("%02x",$red).sprintf("%02x",$green).sprintf("%02x",$blue)."\r\n";
+			close outfile;
+		}
+
+	}
 
 	
 	return if $noHardware;
@@ -555,6 +462,10 @@ sub setPixel($$$$$)
 				{
 					$bytes = $serial->write(chr(0x42).escape(chr($x).chr($y).chr($red).chr($green).chr($blue)));
 #					warn $bytes;
+
+					open outfile, '>>data';
+					print outfile chr(0x42).escape(chr($x).chr($y).chr($red).chr($green).chr($blue))."\n";
+					close outfile;
 				}
 			};
 			warn localtime(time).' connection error '.$@ if $@;
@@ -582,9 +493,7 @@ sub escape($)
 	
 	$data =~ s/\x65/\x65\x3/go;
 	$data =~ s/\x23/\x65\x1/go;
-#	$data =~ s/\x67/\x65\x1/go;
 	$data =~ s/\x42/\x65\x2/go;
-#	$data =~ s/\x68/\x65\x2/go;
 	$data =~ s/\x66/\x65\x4/go;
 	
 	return $data;
@@ -592,10 +501,34 @@ sub escape($)
 
 sub setFrame($)
 {
+	my $frame=shift;
+
+
+	open outfile,'>'.$buffer.'_tmp';
+	print outfile $frame."\n";
+	close outfile;
+	rename $buffer.'_tmp',$buffer;
+
+	if($isRecording)
+	{
+		if((time-$currentRecordingTime) > 60*5)
+		{
+			warn localtime(time).' autostop';
+			$isRecording=0;
+		}
+		else
+		{
+			open outfile,'>>'.$recordPath.$currentRecordingFile.'.rec';
+			print outfile int((time-$currentRecordingTime)*1000).' ';
+			print outfile '03'.$frame."\r\n";
+			close outfile;
+		}
+
+	}
+
 	return if $noHardware;
 
 	
-	my $frame=shift;
 	$serial->write(chr(0x23));#
 
 	my $ppp = $wallWidth*$wallSubpixel;
@@ -606,8 +539,6 @@ sub setFrame($)
 	{
 		my $packet = $_;
 		
-#		warn $packet;
-
 		my $data;
 		for(0..(($ppp-1)))
 		{
@@ -627,6 +558,9 @@ sub setFrame($)
 					if($serial)
 					{
 						$bytes = $serial->write(escape($data));
+						open outfile, '>>data';
+						print outfile escape($data)."\n";
+						close outfile;
 						usleep(4000);
 					}
 				};
@@ -646,12 +580,9 @@ sub setFrame($)
 		}until($serial);
 
 	}
-	$serial->write(chr(0x42));
-	$serial->write(chr(0xff));
-	$serial->write(chr(0x0));
-	$serial->write(chr(0x0));
-	$serial->write(chr(0x0));
-	$serial->write(chr(0x0));
+
+
+
 
 }
 
