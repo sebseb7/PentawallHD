@@ -18,12 +18,12 @@ $0='pentawallHD-server';
 
 my $usbDevice = '/dev/cu.usbserial-A100DDXM';
 my $tcpPort = 1340;
-my $buffer = '/Users/k-ot/Public/pentawallHD_image';	#where to store the buffer for the webviewer
+my $buffer = '/Users/k-ot/Sites/pentawallHD_image';	#where to store the buffer for the webviewer
 my $prioLevels = 4;				#begins with level id 0
 my $defaultLevel = 1;
 my $currentPrio = 0;
 my $isRecording = 0;
-my $recordPath = '/Users/k-ot/Public/wallRecords/';
+my $recordPath = '/Users/k-ot/Sites/wallRecords/';
 my $currentRecordingFile;
 my $currentRecordingTime;
 
@@ -440,7 +440,7 @@ sub setPixel($$$$$)
 		{
 			open outfile,'>>'.$recordPath.$currentRecordingFile.'.rec';
 			print outfile int((time-$currentRecordingTime)*1000).' ';
-			print outfile '03'.$frameBuffer->{$currentPrio}."\r\n";
+			print outfile '02'.sprintf("%02x",$x).sprintf("%02x",$y).sprintf("%02x",$red).sprintf("%02x",$green).sprintf("%02x",$blue)."\r\n";
 			close outfile;
 		}
 
