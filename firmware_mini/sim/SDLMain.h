@@ -11,6 +11,7 @@
 #import <Cocoa/Cocoa.h>
 
 @interface SDLMain : NSObject
+{ bool warningWorkaround;} //unused; without this, gcc emits a warning
 @end
 
 #endif /* _SDLMain_h_ */
