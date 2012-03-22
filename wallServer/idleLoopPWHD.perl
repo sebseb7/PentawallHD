@@ -12,6 +12,7 @@ pwhd::init();
 my $PATH = "/Users/k-ot/Sites/wallRecords";
 $0 = 'idleloop';
 my $event = '';
+my $count;
 while(1)
 {
 	eval
@@ -27,7 +28,7 @@ while(1)
 			push @files,$file;
 		}
 		closedir $dh;
-#		@files = shuffle(@files);
+		@files = shuffle(@files);
 
 		foreach my $file (@files)
 		{
@@ -45,6 +46,14 @@ while(1)
 				{
 					my $frame = $2;
 					my $delay = $1 - (time*1000-$start);
+					if($count<10)
+					{
+						$count++;
+					}
+					else
+					{
+						pwhd::readline();
+					}
 					if( ($delay > 0) and ($delay < 60000))
 					{
 						while($delay > 100)
