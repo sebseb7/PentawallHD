@@ -10,8 +10,8 @@
 
 void dla_plot(int x, int y, uint8_t r,uint8_t g , uint8_t b, float br)
 {
-	r = br*r;
-	g= br*g;
+	r=br*r;
+	g=br*g;
 	b=br*b;
 	setLedXY(x, y, r,g,b);
 }
