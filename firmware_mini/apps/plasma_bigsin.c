@@ -55,10 +55,7 @@ static uint8_t tick(void) {
 		for(x = 0; x < LED_WIDTH; x++) 
 		{
 			uint16_t h = sini(sin1+x*16*2)+ y_part;
-
-			
-//				setLedXY(x,y,sini(h>>2)>>8,sini((h>>2)+5461)>>8,sini((h>>2)+10921)>>8);
-				setLedXY(x,y,sini(h>>2)>>6,sini(((h>>2)+sin2+(y_part/4))+15)>>8,sini((((h+y_part)>>2)+sin3)+2730)>>8);
+			setLedXY(x,y,sini(h>>2)>>8,sini((h>>2)+5461)>>8,sini((h>>2)+10921)>>8);
 
 		}
 	}
