@@ -8,12 +8,20 @@
 #include "main.h"
 #include <math.h>
 
-void dla_plot(int x, int y, uint8_t r,uint8_t g , uint8_t b, float br)
+static void dla_plot(int x, int y, uint8_t r,uint8_t g , uint8_t b, float br)
 {
-	r=br*r;
-	g=br*g;
-	b=br*b;
+	uint8_t o_red;
+	uint8_t o_green;
+	uint8_t o_blue;
+
+	getLedXY(x,y,&o_red,&o_green,&o_blue);
+
+	r=br*r+((1-br)*o_red);
+	g=br*g+((1-br)*o_green);
+	b=br*b+((1-br)*o_blue);
 	setLedXY(x, y, r,g,b);
+
+
 }
 
 #define ipart_(X) ((int)(X))
