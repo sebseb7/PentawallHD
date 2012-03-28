@@ -28,7 +28,7 @@ static void dla_plot(int x, int y, uint8_t r,uint8_t g , uint8_t b, float br)
 
 void draw_filledCircle(
 	unsigned int x, unsigned int y,
-	uint8_t rad,
+	double rad,
 	uint8_t r,
 	uint8_t g,
 	uint8_t b )
@@ -38,7 +38,7 @@ void draw_filledCircle(
 
 	for(i=0;i<rad;i++)
 	{
-		for(j=0;j<rad;j++)
+		for(j=0;j<(i+1);j++)
 		{
 			double dist = pythagoras( j,i );
 			if(dist <= rad-1)
@@ -47,12 +47,23 @@ void draw_filledCircle(
 				setLedXY(y+j,x+i,r,g,b);
 				setLedXY(y+j,x-i,r,g,b);
 				setLedXY(y-j,x-i,r,g,b);
+
+				setLedXY(y-i,x-j,r,g,b);
+				setLedXY(y-i,x+j,r,g,b);
+				setLedXY(y+i,x+j,r,g,b);
+				setLedXY(y+i,x-j,r,g,b);
+
 			}else if(dist < rad)
 			{
 				dla_plot(y-j,x+i,r,g,b,1-(dist-rad+1));
 				dla_plot(y+j,x+i,r,g,b,1-(dist-rad+1));
 				dla_plot(y+j,x-i,r,g,b,1-(dist-rad+1));
 				dla_plot(y-j,x-i,r,g,b,1-(dist-rad+1));
+				
+				dla_plot(y-i,x+j,r,g,b,1-(dist-rad+1));
+				dla_plot(y+i,x+j,r,g,b,1-(dist-rad+1));
+				dla_plot(y+i,x-j,r,g,b,1-(dist-rad+1));
+				dla_plot(y-i,x-j,r,g,b,1-(dist-rad+1));
 			}
 		}
 	}
