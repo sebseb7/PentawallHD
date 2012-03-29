@@ -47,7 +47,6 @@ void registerAnimation(tick_fun tick, uint16_t t, uint16_t ignore)
 	assert(t > 0);
 	// 122Hz / tick
 	interval = 1000000 / 122 * t;
-//	interval = 33333;
 }
 
 
@@ -104,11 +103,11 @@ int main(int argc, char *argv[]) {
 			}
 		}
 
-	/*	startTime+=interval;
+		startTime+=interval;
 		int delay = startTime-get_clock();
 		if(delay > 0)
 			usleep(delay);
-	*/	
+		
 		SDL_Flip(screen);
 	}
 
