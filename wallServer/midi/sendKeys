@@ -1,0 +1,71 @@
+#!/usr/bin/perl
+
+use strict;
+use ceilingLight;
+use Time::HiRes qw(usleep);
+
+
+ceilingLight::init();
+ceilingLight::setLevel(0);
+
+my $h = 0;
+
+open(infile, "./lichtorgel |");
+#open(infile, "ls |");
+select(infile); $| = 1; 
+
+warn 'here';
+
+	my $r = 0;
+	my $g = 0;
+	my $b = 0;
+	my $w = 0;
+	my $r2 = 0;
+	my $g2 = 0;
+	my $b2 = 0;
+	
+my  $rin = my $win = my $ein = '';
+vec($rin,fileno(infile),1) = 1;
+$ein = $rin | $win;
+my $timeout = 0;
+while()
+{
+	(my $nfound,my $timeleft) = select(my $rout=$rin, my $wout=$win, my $eout=$ein, $timeout);                                                          	
+	
+	if($nfound == 1)
+	{
+#		warn $nfound ;
+		my $line = <infile>;
+
+
+	my $pw = 0;
+	my $ce = 0;
+#	warn $line;
+	if($line =~/^(\d+) (\d+) (\d+)$/)
+	{
+		my $x = $1;
+		my $y = $2;
+		my $type = $3;
+		
+		
+#		warn "$x $y $type";
+
+		ceilingLight::setMidi($x,$y,$type);		
+	}
+
+#	ceilingLight::readline();	
+
+#	usleep(9001);
+
+	}	
+	
+	
+	
+	
+	
+	
+	
+};	
+
+warn ceilingLight::read();
+
