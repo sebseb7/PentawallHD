@@ -5,13 +5,14 @@ package ceilingLight;
 use strict;
 use IO::Socket;
 use Time::HiRes qw(usleep);
+use IO::Socket::INET6;
 
 my $socket;
 my $window = 3;
 
 sub init()
 {
-	$socket = IO::Socket::INET->new(PeerAddr => 'localhost',
+	$socket = IO::Socket::INET6->new(PeerAddr => 'localhost',
 									PeerPort => 1340,
 									Proto    => "tcp",
 									Type     => SOCK_STREAM)     or die "Couldn't connect : $@\n";
