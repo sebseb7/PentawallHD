@@ -265,7 +265,8 @@ sub handlerequest($$$$)
 
 		$frameBuffer->{$myPrio} = ($red_h.$green_h.$blue_h) x ($wallHeight*$wallWidth);
 
-		setFrame($frameBuffer->{$myPrio}) if $myPrio == $currentPrio;
+		setPixel(0,0,hex $red_h,hex $green_h,hex $blue_h) if $myPrio == $currentPrio;
+#		setFrame($frameBuffer->{$myPrio}) if $myPrio == $currentPrio;
 
 		return 'ok'."\r\n";
 	}
