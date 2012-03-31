@@ -38,8 +38,8 @@ int main(int argc, char** argv) {
         tio.c_cc[VMIN]=1;
         tio.c_cc[VTIME]=5;
         tty_fd=open("/dev/ttyUSB0", O_RDWR | O_NONBLOCK);      
-        cfsetospeed(&tio,B500000);
-		cfsetispeed(&tio,B500000);
+//        cfsetospeed(&tio,B500000);
+//		cfsetispeed(&tio,B500000);
  
         tcsetattr(tty_fd,TCSANOW,&tio);
 
