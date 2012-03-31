@@ -2,7 +2,7 @@
 
 use strict;
 use ceilingLight;
-use Time::HiRes qw(usleep);
+use Time::HiRes qw(usleep time);
 
 
 ceilingLight::init();
@@ -13,16 +13,19 @@ my $h = 0;
 
 while(1)
 {
-	$h+=4.2;
+	my $start = time;
+	$h+=3.12;
 	
 
 	$h = 0 if $h >= 360;
 
+#	warn $h;
+
 	(my $r2,my $g2,my $b2) = ceilingLight::hsv2rgb($h,1,1);
 	
-	my $r1 = int($r2*25);
-	my $g1 = int($g2*25);
-	my $b1 = int($b2*25);
+	my $r1 = int($r2*155);
+	my $g1 = int($g2*155);
+	my $b1 = int($b2*155);
 
 	my $sum = $r1+$g1+$b1;
 
@@ -33,12 +36,13 @@ while(1)
 #	$g1 /= $div;
 #	$b1 /= $div;
 
+	warn $r1;
 
-	ceilingLight::setColor(0,$r1,$g1,$b1,0);
-	ceilingLight::readline();	
+	ceilingLight::setColor(1,$r1,$g1,$b1,0);
+#	ceilingLight::readline();	
 
-	usleep(9001);
-
+	usleep(40000);
+#	warn (1 / (time-$start) );
 }
 warn ceilingLight::read();
 
