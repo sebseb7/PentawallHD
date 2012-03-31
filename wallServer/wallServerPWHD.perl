@@ -18,12 +18,12 @@ $0='pentawallHD-server';
 
 my $usbDevice = '/dev/cu.usbserial-A100DDXM';
 my $tcpPort = 1340;
-my $buffer = '/Users/k-ot/Sites/pentawallHD_image';	#where to store the buffer for the webviewer
+my $buffer = $ENV{'HOME'}.'/Sites/pentawallHD_image';	#where to store the buffer for the webviewer
 my $prioLevels = 4;				#begins with level id 0
 my $defaultLevel = 1;
 my $currentPrio = 0;
 my $isRecording = 0;
-my $recordPath = '/Users/k-ot/Sites/wallRecords/';
+my $recordPath = $ENV{'HOME'}.'/Sites/wallRecords/';
 my $currentRecordingFile;
 my $currentRecordingTime;
 

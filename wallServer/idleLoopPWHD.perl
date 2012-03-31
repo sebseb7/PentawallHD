@@ -9,7 +9,7 @@ use List::Util qw(shuffle);
 pwhd::init();
 
 
-my $PATH = "/Users/k-ot/Sites/wallRecords";
+my $PATH = $ENV{'HOME'}."/Sites/wallRecords";
 $0 = 'idleloop';
 my $event = '';
 my $count;
@@ -37,7 +37,7 @@ while(1)
 
 			$0 = 'idleloop - playing: '.$file;
 			
-			open infile,'/Users/k-ot/Sites/wallRecords/'.$file or next;
+			open infile,$ENV{'HOME'}.'/Sites/wallRecords/'.$file or next;
 
 
 			while(<infile>)
