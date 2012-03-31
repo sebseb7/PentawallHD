@@ -8,6 +8,13 @@ use Time::HiRes qw(usleep);
 ceilingLight::init();
 ceilingLight::setLevel(0);
 
+
+
+#while()
+#{
+#eval
+#{
+
 my $h = 0;
 
 open(infile, "./lichtorgel |");
@@ -30,11 +37,14 @@ $ein = $rin | $win;
 my $timeout = 0;
 while()
 {
+
+
 	(my $nfound,my $timeleft) = select(my $rout=$rin, my $wout=$win, my $eout=$ein, $timeout);                                                          	
 	
 	if($nfound == 1)
 	{
-#		warn $nfound ;
+#		warn $eout if $eout;
+		warn $nfound ;
 		my $line = <infile>;
 
 
@@ -48,7 +58,7 @@ while()
 		my $type = $3;
 		
 		
-#		warn "$x $y $type";
+		warn "$x $y $type";
 
 		ceilingLight::setMidi($x,$y,$type);		
 	}
@@ -65,7 +75,11 @@ while()
 	
 	
 	
-};	
+}	
+#};
 
+#warn $@ 
+
+#}
 warn ceilingLight::read();
 

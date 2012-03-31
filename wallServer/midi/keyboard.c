@@ -5,7 +5,7 @@
 #include	"keyboard.h"
 
 enum {
-	KEYBOARD_DEV_ID		= 3,
+	KEYBOARD_DEV_ID		= 0,
 	KEYBOARD_MAX_EVENTS = 64,
 };
 

@@ -11,14 +11,8 @@
 
 #include "keyboard.h"
 #include "main.h"
+#include <portmidi.h>
 
-int tty_fd;
-
-
-uint8_t fac1 = 255;
-uint8_t fac2 = 1;
-
-// 48 50 52 53 55 57 59 60 62  64 65 67
 
 static int running = 1;
 static void leave(int sig) { running = 0; }
@@ -27,12 +21,12 @@ static void leave(int sig) { running = 0; }
 int main(int argc, char** argv) {
 	signal(SIGINT, leave);
 
-
 	keyboard_init();
 
 
-	KeyboardEvent e;
+//	printf("%i\n",Pm_CountDevices());
 
+	KeyboardEvent e;
 
 	while(running) {
 

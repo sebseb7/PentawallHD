@@ -1,2 +1,2 @@
 all:
-	gcc -O2 -lportmidi -lporttime *.c  -o lichtorgel 
+	gcc -O2 -lportmidi  *.c  -o lichtorgel 
