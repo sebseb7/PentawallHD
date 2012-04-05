@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/perl -I/Users/k-ot/PentawallHD/wallServer/midi/
 
 use strict;
 use ceilingLight;
@@ -17,7 +17,7 @@ ceilingLight::setLevel(0);
 
 my $h = 0;
 
-open(infile, "./lichtorgel |");
+open(infile, "/Users/k-ot/PentawallHD/wallServer/midi/lichtorgel |");
 #open(infile, "ls |");
 select(infile); $| = 1; 
 

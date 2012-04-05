@@ -5,13 +5,14 @@ package pwhd;
 use strict;
 use IO::Socket;
 use Time::HiRes qw(usleep);
+use IO::Socket::INET6;
 
 my $socket;
 my $window = 3;
 
 sub init()
 {
-	$socket = IO::Socket::INET->new(PeerAddr => 'localhost',
+	$socket = IO::Socket::INET6->new(PeerAddr => '2001:6f8:1194:c3d2:223:dfff:fe7e:c80a',
 									PeerPort => 1340,
 									Proto    => "tcp",
 									Type     => SOCK_STREAM)     or die "Couldn't connect : $@\n";
@@ -41,7 +42,7 @@ sub setAll($)
 	my $green = shift;
 	my $blue = shift;
 
-	print $socket '02'.sprintf("%2x",$red),sprintf("%2x",$green).sprintf("%2x",$blue)."\r\n";
+	print $socket '02ffff'.sprintf("%2x",$red),sprintf("%2x",$green).sprintf("%2x",$blue)."\r\n";
 }
 
 sub setFrame($)
