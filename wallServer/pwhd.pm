@@ -36,7 +36,7 @@ sub setPixel($$$$$)
 	print $socket '02'.sprintf("%02x",$x).sprintf("%02x",$y).sprintf("%2x",$red).sprintf("%2x",$green).sprintf("%2x",$blue)."\r\n";
 }
 
-sub setAll($)
+sub setAll($$$)
 {
 	my $red = shift;
 	my $green = shift;
