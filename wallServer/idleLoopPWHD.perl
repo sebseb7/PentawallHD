@@ -7,18 +7,20 @@ use List::Util qw(shuffle);
 
 
 pwhd::init();
+pwhd::readline();
+
+pwhd::setLevel(0);
+pwhd::readline();
 
 
 my $PATH = $ENV{'HOME'}."/Sites/wallRecords";
 $0 = 'idleloop';
 my $event = '';
-my $count;
 while(1)
 {
 	eval
 	{
 
-		pwhd::setLevel(0);
 
 		my @files;
 		
@@ -46,14 +48,7 @@ while(1)
 				{
 					my $frame = $2;
 					my $delay = $1 - (time*1000-$start);
-					if($count<10)
-					{
-						$count++;
-					}
-					else
-					{
-						pwhd::readline();
-					}
+
 					if( ($delay > 0) and ($delay < 60000))
 					{
 						while($delay > 100)
@@ -71,6 +66,7 @@ while(1)
 					}
 					
 					pwhd::binFrame($frame);
+					pwhd::readline();
 				}
 				if($event eq 'next')
 				{
@@ -79,8 +75,6 @@ while(1)
 				}
 			}
 			close infile;
-			# black frame
-			usleep(500000);
 		};
 	};
 	warn $@ if $@;
