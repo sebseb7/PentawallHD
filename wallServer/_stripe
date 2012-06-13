@@ -1,0 +1,62 @@
+#!/usr/bin/perl
+
+use strict;
+use ceilingLight;
+use Time::HiRes qw(usleep time);
+
+
+ceilingLight::init();
+
+
+my $h = 0;
+	ceilingLight::setColor(0xff,0xff,0,0,0);
+	ceilingLight::readline();	
+	ceilingLight::setColor(0xf0,0x00,0,0,0);
+	ceilingLight::readline();	
+
+
+while(1)
+{
+	my $start = time;
+	$h+=.12;
+	
+
+	$h = 0 if $h >= 360;
+
+#	warn $h;
+
+	(my $r2,my $g2,my $b2) = ceilingLight::hsv2rgb($h,1,1);
+	
+	my $r1 = int($r2*255);
+	my $g1 = int($g2*255);
+	my $b1 = int($b2*255);
+
+	my $sum = $r1+$g1+$b1;
+
+	my $div = $sum / 255;
+
+
+#	$r1 /= $div;
+#	$g1 /= $div;
+#	$b1 /= $div;
+
+	#warn $r1;
+
+	ceilingLight::setColor(0xf1,0,0,$b1,0);
+	ceilingLight::readline();	
+	ceilingLight::setColor(0xf2,0,0,$b1,0);
+	ceilingLight::readline();	
+#	ceilingLight::setColor(0xf3,0,0,$b1,0);
+#	ceilingLight::readline();	
+#	ceilingLight::setColor(0xf4,0,0,$b1,0);
+#	ceilingLight::readline();	
+	ceilingLight::setColor(0xf5,$r1,$g1,$b1,0);
+	ceilingLight::readline();	
+#	ceilingLight::setColor(0xff,0xff,$r1,$g1,$b1);
+#	ceilingLight::readline();	
+
+	usleep(9000);
+#	warn (1 / (time-$start) );
+}
+warn ceilingLight::read();
+
