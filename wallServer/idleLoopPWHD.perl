@@ -1,6 +1,8 @@
-#!/usr/bin/perl -I/Users/k-ot/PentawallHD/wallServer
+#!/usr/bin/perl 
+#-I/Users/k-ot/PentawallHD/wallServer
 
 use pwhd;
+use ceilingLight;
 use strict;
 use Time::HiRes qw(usleep time);
 use List::Util qw(shuffle);
@@ -11,6 +13,12 @@ pwhd::readline();
 
 pwhd::setLevel(0);
 pwhd::readline();
+
+ceilingLight::init();
+ceilingLight::readline();
+
+ceilingLight::setLevel(0);
+ceilingLight::readline();
 
 
 my $PATH = $ENV{'HOME'}."/Sites/wallRecords";
@@ -65,6 +73,8 @@ while(1)
 						
 					}
 					
+					ceilingLight::binFrame($frame);
+					ceilingLight::readline();
 					pwhd::binFrame($frame);
 					pwhd::readline();
 				}

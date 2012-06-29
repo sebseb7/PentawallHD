@@ -56,18 +56,18 @@ while(1)
 
 			$num +=  (sin($y/3+sin(sin($z1*2)*20)*4)+1)*164;
 
-			$num = (sin(($num/100)+(sin($z1)*60))+1)*58;
+			$num = (sin(($num/100)+(sin($z1)*60))+1)*128;
 
-			my $num_g = (sin(($num/70)+(sin($z1)*60))+1)*58;
+			my $num_g = (sin(($num/70)+(sin($z1)*60))+1)*128;
 #			$num +=  (sin($y/3+sin(sin($z1*2)*2)*5)+1)*142;
-			my $num_b = (sin(($num/50)+(sin($z1)*40))+1)*58;
+			my $num_b = (sin(($num/50)+(sin($z1)*40))+1)*128;
 
 			$num=1 if $num<1;
-			$num=239 if $num > 239;
+			$num=255 if $num > 255;
 			$num_g=1 if $num_g<1;
-			$num_g=239 if $num_g > 239;
+			$num_g=255 if $num_g > 255;
 			$num_b=1 if $num_b<1;
-			$num_b=239 if $num_b > 239;
+			$num_b=255 if $num_b > 255;
 
 			$pixbuf[$y*24+$x]=$num;
 			

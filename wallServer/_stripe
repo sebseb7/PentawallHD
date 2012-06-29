@@ -10,9 +10,9 @@ ceilingLight::init();
 
 my $h = 0;
 	ceilingLight::setColor(0xff,0xff,0,0,0);
-	ceilingLight::readline();	
+#	ceilingLight::readline();	
 	ceilingLight::setColor(0xf0,0x00,0,0,0);
-	ceilingLight::readline();	
+#	ceilingLight::readline();	
 
 
 while(1)
@@ -42,16 +42,16 @@ while(1)
 
 	#warn $r1;
 
-	ceilingLight::setColor(0xf1,0,0,$b1,0);
-	ceilingLight::readline();	
-	ceilingLight::setColor(0xf2,0,0,$b1,0);
-	ceilingLight::readline();	
+#	ceilingLight::setColor(0xf1,0,0,$b1,0);
+	#ceilingLight::readline();	
+#	ceilingLight::setColor(0xf2,0,0,$b1,0);
+	#ceilingLight::readline();	
 #	ceilingLight::setColor(0xf3,0,0,$b1,0);
 #	ceilingLight::readline();	
 #	ceilingLight::setColor(0xf4,0,0,$b1,0);
 #	ceilingLight::readline();	
 	ceilingLight::setColor(0xf5,$r1,$g1,$b1,0);
-	ceilingLight::readline();	
+	#ceilingLight::readline();	
 #	ceilingLight::setColor(0xff,0xff,$r1,$g1,$b1);
 #	ceilingLight::readline();	
 

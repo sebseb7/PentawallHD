@@ -13,7 +13,7 @@ my $window = 3;
 sub init()
 {
 	$socket = IO::Socket::INET6->new(PeerAddr => '2001:6f8:1194:c3d2:223:dfff:fe7e:c80a',
-									PeerPort => 1340,
+									PeerPort => 1350,
 									Proto    => "tcp",
 									Type     => SOCK_STREAM)     or die "Couldn't connect : $@\n";
 }
@@ -32,9 +32,9 @@ sub setColor($$$$$)
 	my $blue = shift;
 	my $white = shift;
 
-	$x = $x+0xf0-1;
+#	$x = $x+0xf0-1;
 
-	$x = 0xff if $x < 0xf0;
+#	$x = 0xff if $x < 0xf0;
 
 
 
@@ -113,6 +113,18 @@ sub hsv2rgb {
     }
     return ($r, $g, $b);
 };
+sub binFrame($)
+{
+	my $frame=shift;
+
+	print $socket $frame;
+#	print $socket2 $frame;
+
+	print $socket "\r\n";
+#	print $socket2 "\r\n";
+	
+#	warn <$socket>;
+}
 
 1;
 
