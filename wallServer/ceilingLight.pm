@@ -23,6 +23,15 @@ sub record()
 	print $socket "05\r\n";
 }
 
+sub setAll($$$$)
+{
+	my $red = shift;
+	my $green = shift;
+	my $blue = shift;
+	my $white = shift;
+
+	print $socket '02f0'.sprintf("%2x",$red),sprintf("%2x",$green).sprintf("%2x",$blue).sprintf("%2x",$white)."\r\n";
+}
 
 sub setColor($$$$$)
 {

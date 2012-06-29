@@ -3,10 +3,12 @@
 
 use strict;
 use pwhd;
+use ceilingLight;
 use Time::HiRes qw(usleep time);
 
 
 pwhd::init();
+ceilingLight::init();
 
 #pwhd::setLevel(3);
 my @frame;
@@ -86,7 +88,7 @@ while(1)
 	}
 
 	pwhd::binFrame('03'.join('',@frame)."\r\n");
-	pwhd::setPixel(0xf0,$red,$green,$blue,0);
+	ceilingLight::setAll($red,$green,$blue,0);
 	usleep(30*1000);
 	warn (1 / (time-$start) );
 }
