@@ -6,35 +6,30 @@ use Time::HiRes qw(usleep);
 
 
 ceilingLight::init();
-ceilingLight::setLevel(0);
+ceilingLight::setLevel(1);
+ceilingLight::readline();	
 
-
-
-#while()
-#{
-#eval
-#{
+my $send = 1;
 
 my $h = 0;
 
-open(infile, "/Users/k-ot/PentawallHD/wallServer/midi/lichtorgel |");
-#open(infile, "ls |");
+open(infile, "./lichtorgel |");
 select(infile); $| = 1; 
 
-warn 'here';
 
-	my $r = 0;
-	my $g = 0;
-	my $b = 0;
-	my $w = 0;
+	my $r1 = 0;
+	my $g1 = 0;
+	my $b1 = 0;
+	my $w1 = 0;
 	my $r2 = 0;
 	my $g2 = 0;
 	my $b2 = 0;
+	my $w2 = 0;
 	
 my  $rin = my $win = my $ein = '';
 vec($rin,fileno(infile),1) = 1;
 $ein = $rin | $win;
-my $timeout = 0;
+my $timeout = 10;
 while()
 {
 
@@ -43,14 +38,11 @@ while()
 	
 	if($nfound == 1)
 	{
-#		warn $eout if $eout;
-		warn $nfound ;
+		#warn $nfound ;
+		
 		my $line = <infile>;
 
 
-	my $pw = 0;
-	my $ce = 0;
-#	warn $line;
 	if($line =~/^(\d+) (\d+) (\d+)$/)
 	{
 		my $x = $1;
@@ -58,12 +50,67 @@ while()
 		my $type = $3;
 		
 		
-		warn "$x $y $type";
+#		warn "$x $y $type";
 
-		ceilingLight::setMidi($x,$y,$type);		
+		if($send)
+		{
+
+			if(($x == 7)and($type== 176))
+			{
+				$r1 = $y*2;
+			}
+			if(($x == 7)and($type== 177))
+			{
+				$g1 = $y*2;
+			}
+			if(($x == 7)and($type== 178))
+			{
+				$b1 = $y*2;
+			}
+			if(($x == 7)and($type== 179))
+			{
+				$w1 = $y*2;
+			}
+			if(($x == 7)and($type== 180))
+			{
+				$r2 = $y*2;
+			}
+			if(($x == 7)and($type== 181))
+			{
+				$g2 = $y*2;
+			}
+			if(($x == 7)and($type== 182))
+			{
+				$b2 = $y*2;
+			}
+			if(($x == 7)and($type== 183))
+			{
+				$w2 = $y*2;
+			}
+			ceilingLight::setColor(1,$r1,$g1,$b1,$w1);		
+			ceilingLight::setColor(2,$r1,$g1,$b1,$w1);		
+			ceilingLight::setColor(3,$r1,$g1,$b1,$w1);		
+			ceilingLight::setColor(4,$r1,$g1,$b1,$w1);		
+			ceilingLight::setColor(5,$r2,$g2,$b2,$w2);		
+			ceilingLight::readline();	
+		}
+		if(($x == 125)and($type== 176)and($y==0))
+		{
+			ceilingLight::setLevel(0);
+			ceilingLight::readline();
+			$send = 0;
+		}
+		if(($x == 125)and($type== 176)and($y==127))
+		{
+			ceilingLight::setLevel(1);
+			ceilingLight::readline();	
+			$send = 1;
+		}
+		
+
+
 	}
 
-#	ceilingLight::readline();	
 
 #	usleep(9001);
 
