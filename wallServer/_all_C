@@ -1,0 +1,42 @@
+#!/usr/bin/perl
+
+use strict;
+use ceilingLight;
+use pwhd;
+use Time::HiRes qw(usleep time);
+
+
+ceilingLight::init();
+pwhd::init();
+
+
+my $h = 0;
+	
+
+
+while(1)
+{
+	my $start = time;
+
+	pwhd::setAll(0xFF,0,0);
+	pwhd::readline();
+	ceilingLight::setColor(0,0xff,0,0,0);
+	ceilingLight::readline();
+	usleep(3000000);
+	pwhd::setAll(0,0xFF,0);
+	pwhd::readline();
+	ceilingLight::setColor(0,0,255,0,0);
+	ceilingLight::readline();
+	usleep(3000000);
+	pwhd::setAll(0,0,0xFF);
+	pwhd::readline();
+	ceilingLight::setColor(0,0,0,255,0);
+	ceilingLight::readline();
+	usleep(3000000);
+	ceilingLight::setColor(0,0,0,0,255);
+	ceilingLight::readline();
+	usleep(3000000);
+	warn (6/(time-$start) );
+}
+warn ceilingLight::read();
+
