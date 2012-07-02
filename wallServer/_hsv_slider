@@ -14,7 +14,7 @@ my $h = 0;
 while(1)
 {
 	my $start = time;
-	$h+=3.12;
+	$h+=23.12;
 	
 
 	$h = 0 if $h >= 360;

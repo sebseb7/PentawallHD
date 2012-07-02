@@ -3,12 +3,15 @@
 
 use strict;
 use pwhd;
+use ceilingLight;
 use Time::HiRes qw(usleep time);
 
 
 pwhd::init();
+ceilingLight::init();
 
 pwhd::setLevel(3);
+ceilingLight::setLevel(3);
 my @frame;
 
 foreach my $x (0..((24*24)-1))
@@ -81,7 +84,7 @@ while(1)
 			if(($x == 10)and($y == 10))
 			{
 				#pwhd::setPixel(0xf0,100,100,100,100);
-				pwhd::setPixel(0xf0,$value,$value2,$value5,0);
+				ceilingLight::setAll($value,$value2,$value5,0);
 
 			}
 		}
