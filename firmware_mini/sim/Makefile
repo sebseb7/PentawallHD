@@ -6,8 +6,8 @@ LDFLAGS=
 BINEXT=
 
 ifeq ($(UNAME), Darwin)
-	FLAGS   += -I/Library/Frameworks/SDL.framework/Headers
-	LDFLAGS +=   -framework SDL -framework Cocoa SDLmain.m
+	FLAGS   += -I/usr/local/include/SDL
+	LDFLAGS +=   -lSDL -framework Cocoa SDLmain.m
 endif
 
 ifeq ($(UNAME), Linux)
