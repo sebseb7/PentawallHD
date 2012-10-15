@@ -2,10 +2,13 @@
 
 use strict;
 use ceilingLight;
+use pwhd;
 use Time::HiRes qw(usleep time);
 
 
+pwhd::init();
 ceilingLight::init();
+	ceilingLight::setColor(0,0,0,0,255);
 
 
 my $h = 0;
@@ -14,7 +17,7 @@ my $h = 0;
 while(1)
 {
 	my $start = time;
-	$h+=2.12;
+	$h+=1.12;
 	
 
 	$h = 0 if $h >= 360;
@@ -38,15 +41,11 @@ while(1)
 
 	warn $r1;
 
-	ceilingLight::setColor(1,$r1,$g1,$b1,0);
-	ceilingLight::setColor(2,$r1,$g1,$b1,0);
-	ceilingLight::setColor(3,$r1,$g1,$b1,0);
-	ceilingLight::setColor(4,$r1,$g1,$b1,0);
-	ceilingLight::setColor(5,$r1,$g1,$b1,255);
+	pwhd::setAll($r1,$g1,$b1);
 #	ceilingLight::readline();	
 
-	usleep(40000);
-#	warn (1 / (time-$start) );
+	usleep(4000);
+	warn (1 / (time-$start) );
 }
 warn ceilingLight::read();
 

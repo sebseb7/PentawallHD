@@ -1,0 +1,44 @@
+#!/usr/bin/perl
+
+use strict;
+use ceilingLight;
+use Time::HiRes qw(usleep time);
+
+
+ceilingLight::init();
+
+
+my $h = 0;
+
+
+while(1)
+{
+
+	ceilingLight::setColor(0x0,255,0,0,0);
+	usleep(4400);
+	ceilingLight::setColor(0x0,0,0,0,0);
+	usleep(30000);
+	ceilingLight::setColor(0x0,255,255,0,0);
+	usleep(4400);
+	ceilingLight::setColor(0x0,0,0,0,0);
+	usleep(30000);
+	ceilingLight::setColor(0x0,0,255,0,0);
+	usleep(4400);
+	ceilingLight::setColor(0x0,0,0,0,0);
+	usleep(30000);
+	ceilingLight::setColor(0x0,0,255,255,0);
+	usleep(4400);
+	ceilingLight::setColor(0x0,0,0,0,0);
+	usleep(30000);
+	ceilingLight::setColor(0x0,0,0,255,0);
+	usleep(4400);
+	ceilingLight::setColor(0x0,0,0,0,0);
+	usleep(30000);
+	ceilingLight::setColor(0x0,255,0,255,0);
+	usleep(4400);
+	ceilingLight::setColor(0x0,0,0,0,0);
+	usleep(30000);
+#	warn (1 / (time-$start) );
+}
+warn ceilingLight::read();
+

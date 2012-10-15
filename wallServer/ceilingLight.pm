@@ -12,8 +12,8 @@ my $window = 3;
 
 sub init()
 {
-	$socket = IO::Socket::INET6->new(PeerAddr => '2001:6f8:1194:c3d2:223:dfff:fe7e:c80a',
-									PeerPort => 1351,
+	$socket = IO::Socket::INET6->new(PeerAddr => '::1',
+									PeerPort => 1341,
 									Proto    => "tcp",
 									Type     => SOCK_STREAM)     or die "Couldn't connect : $@\n";
 }
@@ -23,6 +23,15 @@ sub record()
 	print $socket "05\r\n";
 }
 
+sub setAll($$$$)
+{
+	my $red = shift;
+	my $green = shift;
+	my $blue = shift;
+	my $white = shift;
+
+	print $socket '02f0'.sprintf("%2x",$red),sprintf("%2x",$green).sprintf("%2x",$blue).sprintf("%2x",$white)."\r\n";
+}
 
 sub setColor($$$$$)
 {

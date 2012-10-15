@@ -1,0 +1,96 @@
+#!/usr/bin/perl
+
+
+use strict;
+use pwhd;
+use ceilingLight;
+use Time::HiRes qw(usleep time);
+
+
+pwhd::init();
+ceilingLight::init();
+
+pwhd::setLevel(3);
+my @frame;
+
+foreach my $x (0..((24*24)-1))
+{
+	$frame[$x] = 1;
+}
+
+
+my $count4 = 0;
+my $count3 = 0;
+my $count = 0;
+my $count2 = 0;
+while(1)
+{
+	my $red;
+	my $green;
+	my $blue;
+	$count4+= 0.003;
+	$count3-= 0.004;
+	$count+= 0.00004;
+	$count2 += 0.0003;
+	my $start = time;
+
+	my $count1_part = sin($count2)*sin($count3*6)*3;
+	my $count2_part = sin($count)*60;
+
+	my $x3 =  ((sin($count3)+1)*(sin($count3)+1)*18);
+	my $y3 =  ((cos($count3)+1)*(sin($count4)+1)*10)+8;
+	
+	my $x2 =  ((sin($count4)+1)*10)+25;
+	my $y2 =  ((cos($count4)+1)*10)+6;
+
+	foreach my $y (0..23)
+	{
+		my $yval = (sin($y*30+sin(sin($count*2)*2)*4)+1)*164;
+		foreach my $x (0..23)
+		{
+	
+
+			my $value = (sin($x/8+$count1_part)+1)*164;
+			$value +=  $yval;
+			$value = (sin(($value/50)+sin($count2_part)*20)+1)*67;
+			
+			my $value2 = (sin($x/10+$count1_part)+1)*164;
+			$value2 +=  $yval;
+			$value2 = (sin(($value2/20)+sin($count2_part)*20)+1)*67;
+
+
+			$value = ($value+$value2)/2;
+			$value = $value; #($value+$value2)/2;
+
+
+		#	$value *= (sin($x/6*sin($count*10))+1)/2;
+
+			#$value = (sin((sin($count3+$count4)+2)/4*sqrt(($x-$x2+($yval/40))*($x-$x2+($yval/40)) + ($y-$y2)*($y-$y2)))+1)*($value/2);
+			$value = (sin( (sin($count3)+1)+0.01*sqrt(($x-$x2)*($x-$x2) + ($y-$y2)*($y-$y2)))+1)*9;
+			my $value4 = $value;
+			$value *= (sin((sin($count4)+1)+0.001*sqrt(($x-$x3)*($x-$x3) + ($y-$y3)*($y-$y3)))+1);
+			$value4 *= (sin((sin($count4)+1)+0.001*sqrt(($x-$x3)*($x-$x3) + ($y-$y3)*($y-$y3)))+1);
+
+			my $value3 = $value;
+
+			$value = (sin(($value-10)/3)+1)*128;
+			my $value2 = (sin(($value3-10)/4)+1)*128;
+			my $value5 = (sin(($value4-15)/5)+1)*128;
+
+
+
+#			$value = 1 if $value == 0;
+			$frame[$x+($y*24)]=sprintf("%02x",$value).sprintf("%02x",$value2).sprintf("%02x",$value5); 
+			$red = $value;
+			$green =$value2;
+			$blue = $value5;
+		}
+	}
+
+	pwhd::binFrame('03'.join('',@frame));
+	ceilingLight::setAll($red,$green,$blue,0);
+	usleep(30*1000);
+	warn (1 / (time-$start) );
+}
+
+

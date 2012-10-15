@@ -1,5 +1,4 @@
-#!/usr/bin/perl 
-#-I/Users/k-ot/PentawallHD/wallServer
+#!/usr/bin/perl -I/Users/seb/gitrepos/PentawallHD/wallServer
 
 use pwhd;
 use ceilingLight;
