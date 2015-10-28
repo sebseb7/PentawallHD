@@ -27,9 +27,9 @@ my $count2 = 0;
 while(1)
 {
 	$count4+= 0.003;
-	$count3-= 0.01;
+	$count3-= 0.001;
 	$count+= 0.004;
-	$count2 += 0.03;
+	$count2 += 0.003;
 	my $start = time;
 
 	my $count1_part = sin($count2)*sin($count3*6)*3;
@@ -81,16 +81,45 @@ while(1)
 			#$frame[$x+($y*24)]=sprintf("%02x",200).sprintf("%02x",200).sprintf("%02x",200); 
 			$frame[$x+($y*24)]=sprintf("%02x",$value).sprintf("%02x",$value2).sprintf("%02x",$value5); 
 
-			if(($x == 10)and($y == 10))
+			$value=0 if $value < 100;
+			$value2=0 if $value2 < 100;
+			$value5=0 if $value5 < 100;
+			
+			if(($x == 0)and($y == 0))
 			{
 				#pwhd::setPixel(0xf0,100,100,100,100);
-				ceilingLight::setAll($value,$value2,$value5,0);
-
+				ceilingLight::setColor(1,$value,$value2,$value5,0);
+				ceilingLight::readline();
+			}
+			if(($x == 6)and($y == 6))
+			{
+				#pwhd::setPixel(0xf0,100,100,100,100);
+				ceilingLight::setColor(4,$value,$value2,$value5,0);
+				ceilingLight::readline();
+			}
+			if(($x == 12)and($y == 12))
+			{
+				#pwhd::setPixel(0xf0,100,100,100,100);
+				ceilingLight::setColor(2,$value,$value2,$value5,0);
+				ceilingLight::readline();
+			}
+			if(($x == 18)and($y == 18))
+			{
+				#pwhd::setPixel(0xf0,100,100,100,100);
+				ceilingLight::setColor(3,$value,$value2,$value5,0);
+				ceilingLight::readline();
+			}
+			if(($x == 23)and($y == 23))
+			{
+				#pwhd::setPixel(0xf0,100,100,100,100);
+				ceilingLight::setColor(5,$value,$value2,$value5,0);
+				ceilingLight::readline();
 			}
 		}
 	}
 
 	pwhd::binFrame('03'.join('',@frame)."\r\n");
+	pwhd::readline();
 	usleep(30*1000);
 	warn (1 / (time-$start) );
 }

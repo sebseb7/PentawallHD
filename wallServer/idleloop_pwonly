@@ -10,7 +10,7 @@ use List::Util qw(shuffle);
 pwhd::init();
 pwhd::readline();
 
-pwhd::setLevel(0);
+pwhd::setLevel(4);
 pwhd::readline();
 
 
@@ -20,6 +20,7 @@ $0 = 'idleloop';
 my $event = '';
 while(1)
 {
+	warn 'a';
 	eval
 	{
 
@@ -43,9 +44,11 @@ while(1)
 			
 			open infile,$ENV{'HOME'}.'/Sites/wallRecords/'.$file or next;
 
+			warn $0;
 
 			while(<infile>)
 			{
+				warn 'l';
 				if(/^(\d+) (.*)\r\n$/)
 				{
 					my $frame = $2;

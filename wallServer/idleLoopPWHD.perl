@@ -73,10 +73,14 @@ while(1)
 						
 					}
 					
-					ceilingLight::binFrame($frame);
-					ceilingLight::readline();
-					pwhd::binFrame($frame);
-					pwhd::readline();
+					#ceilingLight::binFrame($frame);
+					#ceilingLight::readline();
+			
+					if(length($frame) == 3458)
+					{
+						pwhd::binFrame($frame);
+						pwhd::readline();
+					}
 				}
 				if($event eq 'next')
 				{

@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-use Device::SerialPort;
+#use Device::SerialPort;
 use Time::HiRes qw(usleep time sleep);
 
 use pwhd;
@@ -35,7 +35,7 @@ my $slider_add = 0.01;
 while(1)
 {
 	$z+= ((sin($z1))/100);
-	$z1+=0.005;
+	$z1+=0.001;
 	my $time1 = time;
  
 
@@ -52,15 +52,16 @@ while(1)
 #			my $num = sin($x*3.2+3*sin($z))*40*cos($z*2.1);
 #			$num *= abs sin($y*3.1-4)*10 + cos($y*3-sin($z*3))*25 ;
 
-			my $num = (sin($x/(sin(1)+1)+(sin($z)*10))+1)*164;
+			my $num = ((sin($x/$z)+(sin($z)*10))+1)*164;
 
 			$num +=  (sin($y/3+sin(sin($z1*2)*20)*4)+1)*164;
 
-			$num = (sin(($num/100)+(sin($z1)*60))+1)*128;
+			$num = (sin(($num/300)+(sin($z1)*60))+1)*128;
 
 			my $num_g = (sin(($num/70)+(sin($z1)*60))+1)*128;
-#			$num +=  (sin($y/3+sin(sin($z1*2)*2)*5)+1)*142;
-			my $num_b = (sin(($num/50)+(sin($z1)*40))+1)*128;
+			$num = (sin(($num/100)+(sin($z1)*60))+1)*128;
+			$num +=  (sin($y/3+sin(sin($z1*2)*2)*5)+1)*142;
+			my $num_b = (sin(($num/50)+(sin($z1)*20))+1)*128;
 
 			$num=1 if $num<1;
 			$num=255 if $num > 255;
@@ -89,6 +90,7 @@ while(1)
 
 
 	pwhd::binFrame($str);
+	pwhd::readline();
 	usleep(40000);
 	warn $slider;
 

@@ -7,8 +7,8 @@ use Time::HiRes qw(usleep time);
 
 pwhd::init();
 	warn pwhd::readline();
-pwhd::setLevel(4);
-	warn pwhd::readline();
+#pwhd::setLevel(4);
+#	warn pwhd::readline();
 
 
 #	pwhd::binFrame("0401\r\n0401\r\n0401\r\n0401\r\n0401\r\n0401\r\n0401\r\n");
@@ -33,7 +33,7 @@ foreach my $x (0..576)
 
 my @pixels;
 
-my $pixels = 40;
+my $pixels = 6;
 
 for(0..($pixels-1))
 {
@@ -48,6 +48,7 @@ while(1)
 	{
 		$frame[$x] = '000000';
 	}
+	$frame[1] = 'FF0000';
 
 
 	foreach my $pixel (@pixels)
@@ -61,7 +62,9 @@ while(1)
 	}
 
 #	warn length(join('',@frame));
-	pwhd::binFrame('03'.join('', @frame)."\r\n");
+	pwhd::binFrame('03'.join('', @frame));
+#	warn  join('',@frame);
+#	i
 	warn pwhd::readline();
 #	warn ('03'.join('', @frame)."\r\n");
 	usleep(44*1000);

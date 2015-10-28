@@ -12,7 +12,7 @@ my $window = 3;
 
 sub init()
 {
-	$socket = IO::Socket::INET6->new(PeerAddr => '::1',
+	$socket = IO::Socket::INET6->new(PeerAddr => 'localhost',
 									PeerPort => 1350,
 									Proto    => "tcp",
 									Type     => SOCK_STREAM)     or die "Couldn't connect : $@\n";

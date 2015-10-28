@@ -14,7 +14,7 @@ my $h = 0;
 while(1)
 {
 	my $start = time;
-	$h+=23.12;
+	$h+=3.12;
 	
 
 	$h = 0 if $h >= 360;
@@ -39,10 +39,15 @@ while(1)
 	warn $r1;
 
 	ceilingLight::setColor(1,$r1,$g1,$b1,0);
+	ceilingLight::readline();
 	ceilingLight::setColor(2,$r1,$g1,$b1,0);
+	ceilingLight::readline();
 	ceilingLight::setColor(3,$r1,$g1,$b1,0);
+	ceilingLight::readline();
 	ceilingLight::setColor(4,$r1,$g1,$b1,0);
-	ceilingLight::setColor(5,$r1,$g1,$b1,255);
+	ceilingLight::readline();
+	ceilingLight::setColor(5,$r1,$g1,$b1,0);
+	ceilingLight::readline();
 #	ceilingLight::readline();	
 
 	usleep(40000);

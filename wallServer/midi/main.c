@@ -24,7 +24,7 @@ int main(int argc, char** argv) {
 	keyboard_init();
 
 
-//	printf("%i\n",Pm_CountDevices());
+	printf("%i\n",Pm_CountDevices());
 
 	KeyboardEvent e;
 

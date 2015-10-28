@@ -6,7 +6,7 @@ use pwhd;
 use Time::HiRes qw(usleep time);
 
 
-ceilingLight::init();
+#ceilingLight::init();
 pwhd::init();
 
 
@@ -20,22 +20,22 @@ while(1)
 
 	pwhd::setAll(0xFF,0,0);
 	pwhd::readline();
-	ceilingLight::setColor(0,0xff,0,0,0);
-	ceilingLight::readline();
-	usleep(3000000);
+#	ceilingLight::setColor(0,0xff,0,0,0);
+#	ceilingLight::readline();
+	usleep(300000);
 	pwhd::setAll(0,0xFF,0);
 	pwhd::readline();
-	ceilingLight::setColor(0,0,255,0,0);
-	ceilingLight::readline();
-	usleep(3000000);
+#	ceilingLight::setColor(0,0,255,0,0);
+#	ceilingLight::readline();
+	usleep(300000);
 	pwhd::setAll(0,0,0xFF);
 	pwhd::readline();
-	ceilingLight::setColor(0,0,0,255,0);
-	ceilingLight::readline();
-	usleep(3000000);
-	ceilingLight::setColor(0,0,0,0,255);
-	ceilingLight::readline();
-	usleep(3000000);
+#	ceilingLight::setColor(0,0,0,255,0);
+#	ceilingLight::readline();
+	usleep(300000);
+#	ceilingLight::setColor(0,0,0,0,255);
+#	ceilingLight::readline();
+	usleep(300000);
 	warn (6/(time-$start) );
 }
 warn ceilingLight::read();
