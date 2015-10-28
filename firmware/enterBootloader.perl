@@ -6,7 +6,7 @@ use Time::HiRes qw(usleep);
 my $hostname = `hostname`;
 chomp $hostname;
 
-my $port = "/dev/cu.usbserial-A2002QDi";
+my $port = "/dev/cu.usbserial-A100DEF2";
 if($hostname eq 'lennyvm')
 {
 	$port = '/dev/ttyUSB0';
@@ -18,7 +18,7 @@ $port->baudrate(500000);
 $port->parity("none");
 $port->stopbits(1);
 
-my $return=$port->write(chr(102).esc(chr(35))."\n");
+my $return=$port->write(chr(102).esc(chr($ARGV[0]))."\n");
 warn $port->read(1);
 
 sub esc($)
