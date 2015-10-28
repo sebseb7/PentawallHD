@@ -1,0 +1,32 @@
+#!/usr/bin/perl
+
+use Device::SerialPort;
+use Time::HiRes qw(usleep);
+
+my $port = Device::SerialPort->new("/dev/cu.usbserial-A100DDXI");
+$port->databits(8);
+$port->baudrate(500000);
+$port->parity("none");
+$port->stopbits(1);
+
+while(1)
+{
+#	my $return=$port->write(chr(66).chr(00).chr(00).chr(200).chr(200).chr(100));
+#	warn $port->read(1);
+	my $return=$port->write(chr(66).chr(00).chr(00).chr(0).chr(0).chr(0));
+	warn $port->read(1);
+	usleep(30200);
+	my $return=$port->write(chr(66).chr(00).chr(00).chr(255).chr(0).chr(0));
+	warn $port->read(1);
+	usleep(30200);
+	my $return=$port->write(chr(66).chr(00).chr(00).chr(0).chr(0).chr(0));
+	warn $port->read(1);
+
+	usleep(30200);
+	my $return=$port->write(chr(66).chr(00).chr(00).chr(0).chr(0).chr(250));
+	warn $port->read(1);
+
+	usleep(30200);
+
+}
+sleep(1);

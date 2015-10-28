@@ -1,0 +1,50 @@
+#!/usr/bin/perl
+
+use Device::SerialPort;
+use Time::HiRes qw(usleep time);
+
+my $port = Device::SerialPort->new("/dev/cu.usbserial-A2002QDi");
+$port->databits(8);
+$port->baudrate(230400);
+$port->parity("none");
+$port->stopbits(1);
+$port->handshake("xoff");
+ 
+
+my $frames  = 0;
+while(1)
+{
+	my $time1 = time;
+	my $return=$port->write(chr(35));
+	for(0..24)
+	{
+		my $return=$port->write((chr(00) x 24 x 3));
+	}
+	my $now = (time-$time1)/1000000;
+	
+	$frames++;
+	
+	while($frames > 10)
+	{
+		(my $count_in, my $string_ba) = $port->read(1);
+	
+		if($count_in == 1)
+		{
+			$frames--;
+		}
+#		warn $count_in;
+	}
+	
+		warn 'ok';
+		warn $frames;
+#
+#	my $gotit = $port->lookfor(1);
+#	warn $gotit;
+#	my $data = $port->read(1);
+
+	
+	usleep(80000-$now);
+	warn 1 / (time - $time1);
+}
+
+warn $port->read(1);
