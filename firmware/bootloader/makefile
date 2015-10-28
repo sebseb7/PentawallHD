@@ -1,6 +1,6 @@
 # MCU name
 MCU = atmega88pa
-MCU_AVRDUDE = atmega88pa
+MCU_AVRDUDE = atmega88p
 ## MCU = atmega644
 
 
@@ -28,7 +28,7 @@ ifeq ($(BOOTSIZE), 512)
 endif
 ifeq ($(BOOTSIZE), 1024)
 	MT_BOOTLOADER_ADDRESS = 0x1800
-	FUSE_SETTINGS = -U lfuse:w:0xd6:m -U hfuse:w:0xdf:m -U efuse:w:0xf8:m
+	FUSE_SETTINGS = -U lfuse:w:0xf7:m -U hfuse:w:0xdc:m -U efuse:w:0x0:m
 endif
 endif
 
