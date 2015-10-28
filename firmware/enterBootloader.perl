@@ -18,7 +18,10 @@ $port->baudrate(500000);
 $port->parity("none");
 $port->stopbits(1);
 
-my $return=$port->write(chr(102).esc(chr($ARGV[0]))."\n");
+my $return=$port->write(chr(102).chr(0xc3));
+my $return=$port->write(chr(102).chr(0xd2));
+my $return=$port->write(chr(102).chr(0xd5));
+my $return=$port->write(chr(102).esc(chr($ARGV[0])));
 warn $port->read(1);
 
 sub esc($)
